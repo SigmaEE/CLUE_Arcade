@@ -7,6 +7,10 @@
 #define CHIPSET     WS2812B
 
 #define BRIGHTNESS 64
+#define Letter_size_row 5
+#define Letter_size_col 4
+#define Arrow_size_row 5
+#define Arrow_size_col 5
 
 // Params for width and height
 const uint8_t kMatrixWidth = 30;
@@ -152,7 +156,8 @@ void setup() {
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
   clearScreen();
-  FastLED.show();
+  home_screen();
+  delay(10000000);
 
   // leds[XY(tailX[nTail], tailY[nTail])] = CRGB::Black;
 
@@ -161,7 +166,7 @@ void setup() {
 }
 
 void loop() {
-  // snake_loop();
-  tetris_loop();
+  snake_loop();
+  //tetris_loop();
 
 }
