@@ -165,7 +165,7 @@ void arcade_word(){
   }
 }
 
-void tetris_word(int start_pos_row, int start_pos_col, std::string color){
+void tetris_word(int start_pos_row, int start_pos_col){
   for (int current_letter = 0; current_letter < tetris_length; current_letter++) { //itterating through each letter in the word we want to write.
     
     switch (current_letter) {

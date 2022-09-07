@@ -180,7 +180,6 @@ void draw() {
 }
 
 void snake_setup() {
-  
   gameOver = false;
   fruitX = rand() % w;
   fruitY = rand() % h;

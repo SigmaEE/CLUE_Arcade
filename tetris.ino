@@ -13,9 +13,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
-#endif
-
-#ifdef CONSOLE_INPUT
 # include <sys/ioctl.h>
 # include <termios.h>
 #endif

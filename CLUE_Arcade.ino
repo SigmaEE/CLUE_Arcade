@@ -67,6 +67,44 @@ void clearScreen() {
   //FastLED.show();
 }
 
+char * dummy_sprite[]={
+"5 5 5 1",
+". c #000000",
+"b c #00f9ff",
+"# c #18f4df",
+"a c #30efbf",
+"c c #61e781",
+".....",
+".....",
+"..#..",
+".aba.",
+"ca#ac"};
+
+// example usage: draw_xpm(dummy_sprite, 10, 10);
+void draw_xpm(char * xpm[], int xofs, int yofs)
+{
+  int w, h, n_colors, depth;
+  char dummy;
+  sscanf(xpm[0], "%d %d %d %d", &w, &h, &n_colors, &depth);
+
+  for (int y = 0; y < h; y++) {
+    for (int x = 0; x < w; x++) {
+      // loop through and parse colors
+      int r, g, b;
+      for (char ** col_str = &xpm[1]; col_str <= &xpm[n_colors]; col_str++) {
+        if (**col_str == xpm[n_colors + 1 + y][x]) { // match! grab color value
+          sscanf(*col_str, "%*c %*c #%02x%02x%02x", &r, &g, &b);
+
+        }
+      }
+      // printf("(%02x%02x%02x)\n", r, g, b);
+      leds[XY(xofs + x, yofs + y)].r = r;
+      leds[XY(xofs + x, yofs + y)].g = g;
+      leds[XY(xofs + x, yofs + y)].b = b;
+    }
+  }
+}
+
 uint8_t readHighScore() {
   static uint8_t tmpScore = 0;
   static uint8_t memHighScore = 0;
