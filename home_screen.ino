@@ -21,108 +21,6 @@ int arrow_up_start_pos_row = snake_start_pos_row + Letter_size_row + 3;
 int arrow_down_start_pos_col = kMatrixWidth/2 + Arrow_size_col/2;
 int arrow_down_start_pos_row = tetris_start_pos_row - Arrow_size_row - 3;
 
-int Arrow_up[Arrow_size_row][Arrow_size_col] = {  { 0, 0, 1, 0, 0},
-                                                  { 0, 1, 1, 1, 0 },
-                                                  { 1, 0, 1, 0, 1 },
-                                                  { 0, 0, 1, 0, 0 },
-                                                  { 0, 0, 1, 0, 0 }
-                                                };
-
-int Arrow_down[Arrow_size_row][Arrow_size_col] = {  { 0, 0, 1, 0, 0},
-                                                    { 0, 0, 1, 0, 0 },
-                                                    { 1, 0, 1, 0, 1 },
-                                                    { 0, 1, 1, 1, 0 },
-                                                    { 0, 0, 1, 0, 0 }
-                                                  };                                                  
-
-
-int A_letter[Letter_size_row][Letter_size_col] = {  { 0, 1, 1, 0 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 1, 1, 1 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 0, 0, 1 }
-                                                  };
-
-int C_letter[Letter_size_row][Letter_size_col] = {  { 0, 1, 1, 1 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 0, 1, 1, 1 }
-                                                  };
-
-
-int D_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 0 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 1, 1, 0 }
-    };
-
-int E_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 1 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 1, 1, 0 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 1, 1, 1 }
-                                                  };
-                                                  
-int I_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 1 },
-                                                    { 0, 1, 1, 0 },
-                                                    { 0, 1, 1, 0 },
-                                                    { 0, 1, 1, 0 },
-                                                    { 1, 1, 1, 1 }
-                                                  };                                                  
-
-int K_letter[Letter_size_row][Letter_size_col] = {  { 1, 0, 0, 1 },
-                                                    { 1, 0, 1, 0 },
-                                                    { 1, 1, 0, 0 },
-                                                    { 1, 0, 1, 0 },
-                                                    { 1, 0, 0, 1 }
-    };
-    
-int L_letter[Letter_size_row][Letter_size_col] = {  { 1, 0, 0, 0 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 1, 1, 1 }
-                                                  };
-
-int N_letter[Letter_size_row][Letter_size_col] = {  { 1, 0, 0, 1 },
-                                                    { 1, 1, 0, 1 },
-                                                    { 1, 1, 1, 1 },
-                                                    { 1, 0, 1, 1 },
-                                                    { 1, 0, 0, 1 }
-                                                  };                                                   
-
-int R_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 0 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 1, 1, 0 },
-                                                    { 1, 0, 1, 0 },
-                                                    { 1, 0, 0, 1 }
-    };
-
-int S_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 1 },
-                                                    { 1, 0, 0, 0 },
-                                                    { 1, 1, 1, 1 },
-                                                    { 0, 0, 0, 1 },
-                                                    { 1, 1, 1, 1 }
-    };
-
-int T_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 1 },
-                                                    { 1, 1, 1, 1 },
-                                                    { 0, 1, 1, 0 },
-                                                    { 0, 1, 1, 0 },
-                                                    { 0, 1, 1, 0 }
-                                                  };
-int U_letter[Letter_size_row][Letter_size_col] = {  { 1, 0, 0, 1 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 0, 0, 1 },
-                                                    { 1, 1, 1, 1 }
-    };
-
-
-
-
 void clue_word(){
 
   
@@ -236,24 +134,49 @@ void arrow_down_sign(){
 
 void home_screen() 
 {
-  delay(1000);
+  //delay(1000);
+  GameOver = false;
+  game = "";
   clue_word();
   arcade_word();
   snake_word();
   arrow_up_sign();
-  int tetris_start_pos_row2 = arrow_down_start_pos_row - (arrow_down_start_pos_row - Arrow_size_row - arrow_up_start_pos_row)/2 - (Letter_size_row/2);
-  Serial.println(arrow_up_start_pos_row);
-  Serial.println(Arrow_size_row);
-  Serial.println(arrow_down_start_pos_row);
-  int tetris_start_pos_col2 = tetris_start_pos_col;
-  Serial.println(tetris_start_pos_row);
-  Serial.println(tetris_start_pos_row2);
-  tetris_word(tetris_start_pos_row2, tetris_start_pos_col2);
+  //int tetris_start_pos_row2 = arrow_down_start_pos_row - (arrow_down_start_pos_row - Arrow_size_row - arrow_up_start_pos_row)/2 - (Letter_size_row/2);
+  //int tetris_start_pos_col2 = tetris_start_pos_col;
+  //tetris_word(tetris_start_pos_row2, tetris_start_pos_col2);
   arrow_down_sign();
   tetris_word(tetris_start_pos_row, tetris_start_pos_col);
   
   
   FastLED.show();
-  delay(1500);
-  Serial.println("Home screen");
+  //delay(1500);
+
+  Serial.println(game);
+  delay(1000);
+
+  int action = check_input();
+  Serial.print("action is: ");
+  Serial.println(action);
+  
+  while (action == ACT_NONE || action == ACT_R || action == ACT_L) { //home screen stays until up or down input on joystick
+    action = check_input();
+    delay(1);
+    Serial.print("action is: ");
+    Serial.println(action);
+    }
+
+  Serial.println("while loop over");
+  if (action & ACT_U) {
+    game = "snake";
+  }
+  if (action & ACT_D) {
+    game = "tetris";
+  }
+
+  if (game == "snake") {
+    snake_setup();
+  }
+  else if (game == "tetris") {
+    tetris_setup();
+  }
 }

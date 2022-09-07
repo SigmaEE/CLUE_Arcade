@@ -45,37 +45,44 @@ char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4] = {
   { " #       #      ",
     " #  #### #  ####",
     " #       #      ",
-    " #       #      " },
+    " #       #      "
+  },
 
   { "##  ##  ##  ##  ",
     "##  ##  ##  ##  ",
     "                ",
-    "                " },
+    "                "
+  },
 
   { "##   #  ##   #  ",
     " ## ##   ## ##  ",
     "    #       #   ",
-    "                " },
+    "                "
+  },
 
   { " ##  #   ##  #  ",
     "##   ## ##   ## ",
     "      #       # ",
-    "                " },
+    "                "
+  },
 
   { " #   #       #  ",
     "###  ## ### ##  ",
     "     #   #   #  ",
-    "                " },
+    "                "
+  },
 
   { "  #  #      ##  ",
     "###  #  ###  #  ",
     "     ## #    #  ",
-    "                " },
+    "                "
+  },
 
   { "#    ##      #  ",
     "###  #  ###  #  ",
     "     #    # ##  ",
-    "                " },
+    "                "
+  },
 };
 
 // used by console rendering
@@ -124,13 +131,7 @@ void new_piece(struct piece * p)
   get_shape(p, p->type, p->rotation);
 }
 
-#define ACT_NONE 0
-#define ACT_L  (1 << 0)
-#define ACT_R  (1 << 1)
-#define ACT_D  (1 << 2)
-#define ACT_RP (1 << 3)
-#define ACT_RN (1 << 4)
-#define ACT_Q  (1 << 5)
+
 
 void print_piece(struct piece * p)
 {
@@ -150,7 +151,7 @@ void render(void)
       int p_yofs = y - active_piece.origin_y ;
       int p_xofs = x - active_piece.origin_x ;
       if (0 <= p_yofs && p_yofs < PHEIGHT
-       && 0 <= p_xofs && p_xofs < PWIDTH) {
+          && 0 <= p_xofs && p_xofs < PWIDTH) {
         int p_val = active_piece.squares[p_yofs][p_xofs];
         if (p_val != 0) {
           field_val = p_val;
@@ -168,27 +169,27 @@ void render(void)
         case 7: color = CRGB::Brown; break;
         case 8: color = CRGB::Grey; break;
       }
-      
-      leds[XY(29-x*3,y*3)] = color;
-      leds[XY(29-x*3,y*3-1)] = color;
-      leds[XY(29-x*3,y*3-2)] = color;
-      leds[XY(28-x*3,y*3)] = color;
-      leds[XY(28-x*3,y*3-1)] = color;
-      leds[XY(28-x*3,y*3-2)] = color;
-      leds[XY(27-x*3,y*3)] = color;
-      leds[XY(27-x*3,y*3-1)] = color;
-      leds[XY(27-x*3,y*3-2)] = color;
-    //  printf("%s%s", field_colors[field_val], "X");
+
+      leds[XY(29 - x * 3, y * 3)] = color;
+      leds[XY(29 - x * 3, y * 3 - 1)] = color;
+      leds[XY(29 - x * 3, y * 3 - 2)] = color;
+      leds[XY(28 - x * 3, y * 3)] = color;
+      leds[XY(28 - x * 3, y * 3 - 1)] = color;
+      leds[XY(28 - x * 3, y * 3 - 2)] = color;
+      leds[XY(27 - x * 3, y * 3)] = color;
+      leds[XY(27 - x * 3, y * 3 - 1)] = color;
+      leds[XY(27 - x * 3, y * 3 - 2)] = color;
+      //  printf("%s%s", field_colors[field_val], "X");
     }
-   // printf("\e[0m|\n");
+    // printf("\e[0m|\n");
   }
   unsigned int tmp = score;
   int i = 0;
   while (tmp > 0) {
     if (tmp & 1) {
-      leds[XY(0,i)] = CRGB::Blue;
+      leds[XY(0, i)] = CRGB::Blue;
     } else {
-      leds[XY(0,i)] = CRGB::Red;
+      leds[XY(0, i)] = CRGB::Red;
     }
     i++;
     tmp = tmp >> 1;
@@ -197,9 +198,9 @@ void render(void)
   i = 0;
   while (tmp > 0) {
     if (tmp & 1) {
-      leds[XY(29,i)] = CRGB::Blue;
+      leds[XY(29, i)] = CRGB::Blue;
     } else {
-      leds[XY(29,i)] = CRGB::Red;
+      leds[XY(29, i)] = CRGB::Red;
     }
     i++;
     tmp = tmp >> 1;
@@ -237,9 +238,9 @@ void remove_filled_rows()
       {
         if (speed_delay > 100)
         {
-          speed_delay -= 100;
+          speed_delay *= 0.85;
         }
-      } 
+      }
       for (int move_row = row; move_row > 0; --move_row) {
         //memcpy(&field[move_row][0], &field[move_row - 1][0], 10);
         for (int move_col = 0; move_col < COLUMNS; ++move_col) {
@@ -279,76 +280,11 @@ int try_move_piece(struct piece * p, int dy, int dx)
   return 1;
 }
 
-int check_input()
-{
-  int action = ACT_NONE;
 
-#ifdef CONSOLE_INPUT
-  long int n = 0;
-  // if n == 0 there is nothing to read
-  ioctl(STDIN_FILENO, FIONREAD, &n);
-  while (n > 0) {
-    int c = fgetc(stdin);
-    switch (c) {
-      case '1': action |= ACT_L; break;
-      case '2': action |= ACT_R; break;
-      case '3': action |= ACT_D; break;
-      case '8': action |= ACT_RN; break;
-      case '9': action |= ACT_RP; break;
-      case 'q': action |= ACT_Q; break;
-    }
-    ioctl(STDIN_FILENO, FIONREAD, &n);
-  }
-#endif
-
-  static long int current_time;
-  static long int last_rot = 0;
-  static long int last_down = 0;
-  static long int last_left = 0;
-  static long int last_right = 0;
-  xPotVal = analogRead(xPotPin);
-  yPotVal = analogRead(yPotPin);
-
-  Serial.print("xval = ");
-  Serial.println(xPotVal);
-  Serial.print("yval = ");
-  Serial.println(yPotVal);
-
-  current_time = millis();
-
-  if ( xPotVal < 400) {
-    if (current_time - last_left > 100) {
-      action |= ACT_L;
-      last_left = millis();    
-    }
-  } else if (xPotVal > 600) {
-    if (current_time - last_right > 100) {
-      action |= ACT_R;
-      last_right = millis();
-    }
-  }
-  if (yPotVal < 400) {
-    if (current_time - last_down > 50) {
-      action |= ACT_D;
-      last_down = millis();
-    }
-  } else if (yPotVal > 600) {
-    
-    if (current_time - last_rot > 300) {
-        action |= ACT_RP;
-        last_rot = millis();
-    }
-  }
-  return action;
-  // compare current input to new input.
-  // if new input then use it
-  // if repeating input (holds left, right or down)
-  // then dont use it until after some time has passed
-}
 
 /*
-void test_game(void)
-{
+  void test_game(void)
+  {
   for (int i = 0; i < 1; ++i) {
     try_move_piece(&active_piece, 0, (random() % 3) - 1);
     rotate_piece(&active_piece, (random() % 3) - 1);
@@ -364,7 +300,7 @@ void test_game(void)
     render();
     usleep(100000);
   }
-}
+  }
 */
 
 #ifdef POSIX_TIME
@@ -373,80 +309,83 @@ int time_delta(struct timespec * t1, struct timespec * t2)
   // return delta in milliseconds
   int delta = 0;
   delta = 1000 * (t2->tv_sec - t1->tv_sec);
-        delta += (t2->tv_nsec - t1->tv_nsec) / (1000 * 1000);;
+  delta += (t2->tv_nsec - t1->tv_nsec) / (1000 * 1000);;
   return delta;
 }
 #endif
 
-int tetris_gameover = 0;
+//int tetris_gameover = 0;
 long int last_tick;
 
 void tetris_setup()
 {
+  for (int y = 0; y < ROWS; ++y) {
+    // printf("\e[0m%-3d |", y);
+    for (int x = 0; x < COLUMNS; ++x) {
+      field[y][x] = 0;
+    }
+  }
+  score = 0;
+  speed_delay = 1000;
   last_tick = millis();
   new_piece(&active_piece);
   render();
+  GameOver = false;
 }
 
 void tetris_loop() {
-    long int current_time;
-    if (tetris_gameover) {
-      if (score > highScore) {
-        highScore = score;
-        writeHighScore();
-        hsAnimation();
-      }
-      deathAnimation();  
-      for (int y = 0; y < ROWS; ++y) {
-        // printf("\e[0m%-3d |", y);
-        for (int x = 0; x < COLUMNS; ++x) {
-          field[y][x] = 0;
-        }
-      }
-      score = 0;
-      speed_delay = 1000;
-      tetris_gameover = 0;
-      last_tick = millis();
-      new_piece(&active_piece);
-      render();
-      return;
+  long int current_time;
+  if (GameOver) {
+    if (score > highScore) {
+      highScore = score;
+      writeHighScore();
+      hsAnimation();
     }
-    int action = check_input();
-    current_time = millis();
-    
-    if (current_time - last_tick > speed_delay) {
-      action |= ACT_D;
-      last_tick = millis();
-    }
+    deathAnimation();
 
-    if (action == ACT_NONE) {
-      return;
-    }
-    if (action & ACT_L) {
-      try_move_piece(&active_piece, 0, -1);
-    }
-    if (action & ACT_R) {
-      try_move_piece(&active_piece, 0, 1);
-    }
-    if (action & ACT_RP) {
-      rotate_piece(&active_piece, 1);
-    }
-    if (action & ACT_RN) {
-      rotate_piece(&active_piece, -1);
-    }
-    if (action & ACT_D) {
-      if (!try_move_piece(&active_piece, 1, 0)) {
-        stick_piece(&active_piece);
-        remove_filled_rows();
-        new_piece(&active_piece);
-        if (0 == try_move_piece(&active_piece, 0, 0)) {
-          // game over!
-          tetris_gameover = 1;
-        }
+    //return;
+    //GameOver = false;
+    last_tick = millis();
+    new_piece(&active_piece);
+    render();
+    return;
+  }
+  int action = check_input();
+  current_time = millis();
+
+  if (current_time - last_tick > speed_delay) {
+    action |= ACT_D;
+    last_tick = millis();
+  }
+
+  if (action == ACT_NONE) {
+    return;
+  }
+  if (action & ACT_L) {
+    try_move_piece(&active_piece, 0, -1);
+  }
+  if (action & ACT_R) {
+    try_move_piece(&active_piece, 0, 1);
+  }
+  if (action & ACT_U) {
+    rotate_piece(&active_piece, 1);
+  }
+  if (action & ACT_RN) {
+    rotate_piece(&active_piece, -1);
+  }
+  if (action & ACT_D) {
+    if (!try_move_piece(&active_piece, 1, 0)) {
+      stick_piece(&active_piece);
+      remove_filled_rows();
+      new_piece(&active_piece);
+      if (0 == try_move_piece(&active_piece, 0, 0)) {
+        // game over!
+        GameOver = true;
       }
-      last_tick = millis();
     }
-    if (!tetris_gameover) {
-      render();
-    }
+    last_tick = millis();
+  }
+  if (!GameOver) {
+    render();
+  }
 }

@@ -4,12 +4,12 @@
 int fruitX, fruitY, score, count;
 int speed_delay = 1000;
 
-// 1,2,3,4 up,right,down,left
-int dir = 2;
+// 1,2,3,4 down,left,up,right
+int dir = ACT_L;
 
 int tailX[600];
 int tailY[600];
-int nTail = 40;
+int nTail = 3;
 
 void inPut() {
 
@@ -26,30 +26,22 @@ void inPut() {
 
 
   if ( xPotVal < 400) {
-    //    if(dir = 4){
-    //      gameOver = true;
-    //    }
-    dir = 4;
+
+    dir = ACT_L;
+
   } else if (xPotVal > 600) {
-    //        if(dir = 2){
-    //      gameOver = true;
-    //    }
-    dir = 2;
+    
+    dir = ACT_R;
   }
   if (yPotVal < 400) {
-    //        if(dir = 1){
-    //      gameOver = true;
-    //    }
-    dir = 3;
+    
+    dir = ACT_D;
+    
   } else if (yPotVal > 600) {
-    //            if(dir = 3){
-    //      gameOver = true;
-    //    }
-    dir = 1;
+    
+    dir = ACT_U;
   }
 }
-
-
 void fruitAnimation() {
   Serial.println("pre animation");
 
@@ -110,26 +102,26 @@ void logic() {
     prevY = prev2Y;
   }
 
-  if (dir == 1) {
+  if (dir == ACT_D) {
     if (y < h - 1) {
       y++;
     } else {
       y = 0;
     }
-  } else if (dir == 3) {
+  } else if (dir == ACT_U) {
     if (y > 0) {
       y--;
     } else {
-      y = kMatrixHeight-1;
+      y = kMatrixHeight - 1;
     }
-  } else if (dir == 2) {
+  } else if (dir == ACT_L) {
     if (x < w - 1) {
       x++;
     } else {
       x = 0;
     }
   }
-  else if (dir == 4) {
+  else if (dir == ACT_R) {
     if (x > 0) {
       x--;
     } else {
@@ -139,7 +131,7 @@ void logic() {
 
   for (int i = 0; i < nTail; i++) {
     if (tailX[i] == x && tailY[i] == y) {
-      gameOver = true;
+      GameOver = true;
     }
   }
 
@@ -180,14 +172,14 @@ void draw() {
 }
 
 void snake_setup() {
-  gameOver = false;
+  GameOver = false;
   fruitX = rand() % w;
   fruitY = rand() % h;
   score = 0;
 }
 
 void snake_loop() {
-  while (!gameOver) {
+  while (GameOver == false) {
     //  Serial.println("Game is running");
     draw();
     inPut();
@@ -195,7 +187,7 @@ void snake_loop() {
     delay(5);
   }
 
-  while (gameOver) {
+  if(GameOver == true) {
 
     deathAnimation();
 
@@ -229,8 +221,8 @@ void snake_loop() {
     //      }
     //      FastLED.show();
     //    }
-
-    gameOver = false;
+  
+    //GameOver = false;
     nTail = 0;
   }
   //

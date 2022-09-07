@@ -12,6 +12,16 @@
 #define Arrow_size_row 5
 #define Arrow_size_col 5
 
+#define ACT_NONE 0
+#define ACT_L  (1 << 0)
+#define ACT_R  (1 << 1)
+#define ACT_D  (1 << 2)
+#define ACT_U (1 << 3)
+#define ACT_RN (1 << 4)
+#define ACT_Q  (1 << 5)
+
+
+
 // Params for width and height
 const uint8_t kMatrixWidth = 30;
 const uint8_t kMatrixHeight = 58;
@@ -27,9 +37,15 @@ const int yPotPin = A1;
 const int w = kMatrixWidth;
 const int h = kMatrixHeight;
 
-bool gameOver;
+bool GameOver;
 int x, y,  highScore;
-
+String game = "none";
+void home_screen();
+int check_input();
+void snake_setup();
+void tetris_setup();
+void snake_loop();
+void tetris_loop();
 
 #define NUM_LEDS (kMatrixWidth * kMatrixHeight)
 CRGB leds_plus_safety_pixel[ NUM_LEDS + 1];
@@ -38,7 +54,7 @@ CRGB* const leds( leds_plus_safety_pixel + 1);
 uint16_t XY( uint8_t x, uint8_t y)
 {
   uint16_t i;
-  if( !( x<0 || x >= kMatrixWidth || y<0 || y >= kMatrixHeight )){
+  if ( !( x < 0 || x >= kMatrixWidth || y < 0 || y >= kMatrixHeight )) {
     if ( kMatrixSerpentineLayout == false) {
       i = (y * kMatrixWidth) + x;
     }
@@ -58,12 +74,81 @@ uint16_t XY( uint8_t x, uint8_t y)
   return 2000;
 }
 
+int check_input()
+{
+  int action = ACT_NONE;
+
+#ifdef CONSOLE_INPUT
+  long int n = 0;
+  // if n == 0 there is nothing to read
+  ioctl(STDIN_FILENO, FIONREAD, &n);
+  while (n > 0) {
+    int c = fgetc(stdin);
+    switch (c) {
+      case '1': action |= ACT_L; break;
+      case '2': action |= ACT_R; break;
+      case '3': action |= ACT_D; break;
+      case '8': action |= ACT_RN; break;
+      case '9': action |= ACT_U; break;
+      case 'q': action |= ACT_Q; break;
+    }
+    ioctl(STDIN_FILENO, FIONREAD, &n);
+  }
+#endif
+
+  static long int current_time;
+  static long int last_rot = 0;
+  static long int last_down = 0;
+  static long int last_left = 0;
+  static long int last_right = 0;
+  xPotVal = analogRead(xPotPin);
+  yPotVal = analogRead(yPotPin);
+
+  Serial.print("xval = ");
+  Serial.println(xPotVal);
+  Serial.print("yval = ");
+  Serial.println(yPotVal);
+
+  current_time = millis();
+
+  if ( xPotVal < 400) {
+    if (current_time - last_left > 200) {
+      action |= ACT_L;
+      last_left = millis();
+    }
+  } else if (xPotVal > 600) {
+    if (current_time - last_right > 200) {
+      action |= ACT_R;
+      last_right = millis();
+    }
+  }
+  if (yPotVal < 400) {
+    if (current_time - last_down > 50) {
+      action |= ACT_D;
+      last_down = millis();
+    }
+  } else if (yPotVal > 600) {
+
+    if (current_time - last_rot > 300) {
+      action |= ACT_U;
+      last_rot = millis();
+    }
+  }
+  return action;
+  // compare current input to new input.
+  // if new input then use it
+  // if repeating input (holds left, right or down)
+  // then dont use it until after some time has passed
+}
+
 void clearScreen() {
+  Serial.println("clearing started");
   for ( int i = 0; i < kMatrixWidth; i++) {
     for (int j = 0; j < kMatrixHeight; j++) {
       leds[XY(i, j)] = CRGB::Black;
     }
   }
+  Serial.println("clearing ended");
   //FastLED.show();
 }
 
@@ -108,8 +193,8 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
 uint8_t readHighScore() {
   static uint8_t tmpScore = 0;
   static uint8_t memHighScore = 0;
-  
-  for (int i=0; i<1024; i++) {
+
+  for (int i = 0; i < 1024; i++) {
     tmpScore = EEPROM.read(i);
     if (tmpScore > memHighScore) {
       memHighScore = tmpScore;
@@ -174,8 +259,8 @@ void hsAnimation() {
   delay(100);
   for (int y = 0; y < 57; ++y) {
     for (int x = 0; x < 29; ++x) {
-      leds[XY(x,y)] = CRGB::Green;
-      }
+      leds[XY(x, y)] = CRGB::Green;
+    }
   }
   delay(100);
 
@@ -185,7 +270,7 @@ void hsAnimation() {
 void setup() {
   Serial1.begin(9600);
   Serial1.println("Setting up");
-  
+
   x = w / 2;
   y = h / 2;
 
@@ -195,16 +280,27 @@ void setup() {
   FastLED.setBrightness( BRIGHTNESS );
   clearScreen();
   home_screen();
-  delay(10000000);
-
-  // leds[XY(tailX[nTail], tailY[nTail])] = CRGB::Black;
-
-  snake_setup();
-  tetris_setup();
+  
 }
 
+// leds[XY(tailX[nTail], tailY[nTail])] = CRGB::Black;
+
+//snake_setup();
+//tetris_setup();
+
 void loop() {
-  snake_loop();
-  //tetris_loop();
+  if (GameOver){
+    clearScreen();
+    home_screen();
+    
+  }
+  GameOver = false;
+  if (game == "snake") {
+    snake_loop();
+  }
+  else if (game == "tetris") {
+    tetris_loop();
+    
+  }
 
 }
