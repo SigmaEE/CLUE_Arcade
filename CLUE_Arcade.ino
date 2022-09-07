@@ -6,7 +6,7 @@
 #define COLOR_ORDER GRB
 #define CHIPSET     WS2812B
 
-#define BRIGHTNESS 64
+#define BRIGHTNESS 50
 #define Letter_size_row 5
 #define Letter_size_col 4
 #define Arrow_size_row 5
@@ -104,10 +104,10 @@ int check_input()
   xPotVal = analogRead(xPotPin);
   yPotVal = analogRead(yPotPin);
 
-  Serial.print("xval = ");
-  Serial.println(xPotVal);
-  Serial.print("yval = ");
-  Serial.println(yPotVal);
+  //Serial.print("xval = ");
+  //Serial.println(xPotVal);
+  //Serial.print("yval = ");
+  //Serial.println(yPotVal);
 
   current_time = millis();
 
@@ -154,11 +154,11 @@ void clearScreen() {
 
 char * dummy_sprite[]={
 "5 5 5 1",
-". c #000000",
-"b c #00f9ff",
-"# c #18f4df",
-"a c #30efbf",
-"c c #61e781",
+". c #660000",
+"b c #56f9ff",
+"# c #92f4df",
+"a c #67efbf",
+"c c #15e781",
 ".....",
 ".....",
 "..#..",

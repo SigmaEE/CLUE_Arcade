@@ -16,13 +16,13 @@ void inPut() {
   xPotVal = analogRead(xPotPin);
   yPotVal = analogRead(yPotPin);
 
-  Serial.print("xval = ");
+  //Serial.print("xval = ");
 
-  Serial.println(xPotVal);
+  //Serial.println(xPotVal);
 
-  Serial.print("yval = ");
+  //Serial.print("yval = ");
 
-  Serial.println(yPotVal);
+  //Serial.println(yPotVal);
 
 
   if ( xPotVal < 400) {
@@ -223,7 +223,7 @@ void snake_loop() {
     //    }
   
     //GameOver = false;
-    nTail = 0;
+    nTail = 3;
   }
   //
   //FastLED.show();
