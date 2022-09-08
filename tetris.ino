@@ -331,18 +331,19 @@ void tetris_setup()
   new_piece(&active_piece);
   render();
   GameOver = false;
+  GameOver_tetris = false;
 }
 
 void tetris_loop() {
   long int current_time;
-  if (GameOver) {
+  if (GameOver_tetris) {
     if (score > highScore) {
       highScore = score;
       writeHighScore();
       hsAnimation();
     }
     deathAnimation();
-
+    GameOver = true;
     //return;
     //GameOver = false;
     last_tick = millis();
@@ -380,7 +381,7 @@ void tetris_loop() {
       new_piece(&active_piece);
       if (0 == try_move_piece(&active_piece, 0, 0)) {
         // game over!
-        GameOver = true;
+        GameOver_tetris = true;
       }
     }
     last_tick = millis();

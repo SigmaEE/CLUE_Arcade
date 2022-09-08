@@ -38,9 +38,13 @@ const int w = kMatrixWidth;
 const int h = kMatrixHeight;
 
 bool GameOver;
+bool GameOver_tetris;
+bool GameOver_snake;
+bool selection;
 int x, y,  highScore;
 String game = "none";
 void home_screen();
+void game_selection();
 int check_input();
 void snake_setup();
 void tetris_setup();
@@ -142,13 +146,11 @@ int check_input()
 }
 
 void clearScreen() {
-  Serial.println("clearing started");
   for ( int i = 0; i < kMatrixWidth; i++) {
     for (int j = 0; j < kMatrixHeight; j++) {
       leds[XY(i, j)] = CRGB::Black;
     }
   }
-  Serial.println("clearing ended");
   //FastLED.show();
 }
 
@@ -278,8 +280,10 @@ void setup() {
   Serial1.println(highScore);
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
-  clearScreen();
-  home_screen();
+  GameOver = true;
+  selection = false;
+  //clearScreen();
+  //home_screen();
   
 }
 
@@ -292,9 +296,10 @@ void loop() {
   if (GameOver){
     clearScreen();
     home_screen();
+    game_selection();
     
   }
-  GameOver = false;
+  //GameOver = false;
   if (game == "snake") {
     snake_loop();
   }

@@ -200,13 +200,14 @@ void game_selection();
 void home_screen()
 {
   //delay(1000);
-  GameOver = false;
+  GameOver = true;
+  
   game = "";
   clue_word();
   arcade_word();
   select_line(line1_start_pos_col, line1_length, line1_start_pos_row + scroll_move);
   snake_word();
-  arrow_right_sign(scroll_move);
+  //arrow_right_sign(scroll_move);
   select_line(line2_start_pos_col, line2_length, line2_start_pos_row + scroll_move);
   tetris_word(tetris_start_pos_row, tetris_start_pos_col);
   seting_word(seting_start_pos_row, seting_start_pos_col);
@@ -223,24 +224,30 @@ void home_screen()
   FastLED.show();
   //delay(1500);
 
-  game_selection();
+  //game_selection();
 }
 void game_selection() {
   int action = check_input();
-
-  while (action != ACT_R) {
+  if (selection == false) {
+    //Serial.println("First loop");
     action = check_input();
+    
     while (action == ACT_NONE || action == ACT_L) { //home screen stays until up or down input on joystick
+      //Serial.println("while loop");
       action = check_input();
+      //Serial.println(action);
+      //game_selection();
       delay(1);
-    }
 
-    Serial.println("while loop over");
-    if (action & ACT_U) {
+      if (action & ACT_U) {
       if (scroll_move > 0) {
         scroll_move -= (Letter_size_row + word_margin - 1);
-        clearScreen();
-        home_screen();
+        
+        Serial.println(action);
+        Serial.println("up");
+        break;
+        //clearScreen();
+        //home_screen();
       }
 
 
@@ -248,25 +255,49 @@ void game_selection() {
     if (action & ACT_D) {
       if (scroll_move < 2 * (Letter_size_row + word_margin - 1)) {
         scroll_move += (Letter_size_row + word_margin - 1);
-        clearScreen();
-        home_screen();
+        
+        Serial.println("down");
+        Serial.println(action);
+        break;
+        //clearScreen();
+        //home_screen();
       }
     }
-    //if (action & ACT_R) {
+
+    if (action & ACT_R) {
+      Serial.println("right");
+      Serial.println("action is: ");
+      Serial.println(action);
+      Serial.println(selection);
+      selection = true;
+      Serial.println(selection);
+      Serial.println(scroll_move);
+      delay(1);
       //break;
-    //}
+    }
+    }
+    
+
+    
+    
 
   }
-
-  if (scroll_move == 0 * (Letter_size_row + word_margin - 1)) {
-    game = "snake";
-  } else {
-    game = "tetris";
-  }
-
-  if (game == "snake") {
-    snake_setup();
-  } else if (game == "tetris") {
-    tetris_setup();
+  else {
+    Serial.println("Exited while loop");
+    if (scroll_move == 0 * (Letter_size_row + word_margin - 1)) {
+      game = "snake";
+    } else {
+      game = "tetris";
+    }
+    Serial.println("game selected");
+    Serial.println(game);
+    if (game == "snake") {
+      snake_setup();
+    } else if (game == "tetris") {
+      tetris_setup();
+    }
+    Serial.println("setted up");
+    selection = false;
+    GameOver = false;
   }
 }
