@@ -1,13 +1,5 @@
-#define ARDUINO 1
-
-#ifdef ARDUINO
-# include <FastLED.h>
-# include <EEPROM.h>
-#endif
-
-#ifndef ARDUINO
+#ifdef POSIX_BUILD
 # define CONSOLE_INPUT
-
 # include <time.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -15,6 +7,9 @@
 # include <string.h>
 # include <sys/ioctl.h>
 # include <termios.h>
+#else
+# include <FastLED.h>
+# include <EEPROM.h>
 #endif
 
 #define ROWS 20
@@ -157,6 +152,7 @@ void render(void)
           field_val = p_val;
         }
       }
+#ifndef POSIX_BUILD
       CRGB color;
       switch (field_val) {
         case 0: color = CRGB::Black; break;
@@ -179,10 +175,17 @@ void render(void)
       leds[XY(27 - x * 3, y * 3)] = color;
       leds[XY(27 - x * 3, y * 3 - 1)] = color;
       leds[XY(27 - x * 3, y * 3 - 2)] = color;
-      //  printf("%s%s", field_colors[field_val], "X");
+#endif
+
+#ifdef POSIX_BUILD
+      printf("%s%s", field_colors[field_val], "X");
+#endif
     }
-    // printf("\e[0m|\n");
+#ifdef POSIX_BUILD
+    printf("\e[0m|\n");
+#endif
   }
+#ifndef POSIX_BUILD
   unsigned int tmp = score;
   int i = 0;
   while (tmp > 0) {
@@ -205,8 +208,12 @@ void render(void)
     i++;
     tmp = tmp >> 1;
   }
-  //printf("Score: %d\n", score);
   FastLED.show();
+#endif
+
+#ifdef POSIX_BUILD
+  printf("Score: %d\n", score);
+#endif
 }
 
 void stick_piece(struct piece * p)
@@ -233,7 +240,7 @@ void remove_filled_rows()
     }
     if (filled) {
       ++score;
-      ++count;
+      //++count;
       if (score % 3 == 0)
       {
         if (speed_delay > 100)
@@ -333,15 +340,26 @@ void tetris_setup()
   GameOver = false;
 }
 
+#ifdef POSIX_BUILD
+int millis(void)
+{
+	return 0;
+}
+#endif
+
 void tetris_loop() {
   long int current_time;
   if (GameOver) {
     if (score > highScore) {
       highScore = score;
+#ifndef POSIX_BUILD
       writeHighScore();
       hsAnimation();
+#endif
     }
+#ifndef POSIX_BUILD
     deathAnimation();
+#endif
 
     //return;
     //GameOver = false;
