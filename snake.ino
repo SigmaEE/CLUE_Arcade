@@ -30,15 +30,15 @@ void inPut() {
     dir = ACT_L;
 
   } else if (xPotVal > 600) {
-    
+
     dir = ACT_R;
   }
   if (yPotVal < 400) {
-    
+
     dir = ACT_D;
-    
+
   } else if (yPotVal > 600) {
-    
+
     dir = ACT_U;
   }
 }
@@ -106,10 +106,10 @@ void logic() {
     if (y < h - 1) {
       y++;
     } else {
-      y = 0;
+      y = start_h;
     }
   } else if (dir == ACT_U) {
-    if (y > 0) {
+    if (y > start_h) {
       y--;
     } else {
       y = kMatrixHeight - 1;
@@ -140,14 +140,15 @@ void logic() {
     nTail++;
     fruitAnimation();
     fruitX = rand() % w;
-    fruitY = rand() % h;
+    fruitY = random(start_h, end_h);
   }
 }
 
 void draw() {
   clearScreen();
   for ( int i = 0; i < w; i++) {
-    for (int j = 0; j < h; j++) {
+    leds[XY(i, start_h - 1)] = CRGB::White;
+    for (int j = start_h; j < end_h; j++) {
       if ( i == x && j == y) {
         leds[XY(i, j)] = CRGB::Blue;
       } else if ( i == fruitX && j == fruitY) {
@@ -163,6 +164,29 @@ void draw() {
     }
   }
 
+  unsigned int tmp = score;
+  int i = 0;
+  while (tmp > 0) {
+    if (tmp & 1) {
+      leds[XY(0, i)] = CRGB::Blue;
+    } else {
+      leds[XY(0, i)] = CRGB::Red;
+    }
+    i++;
+    tmp = tmp >> 1;
+  }
+  tmp = highScore_snake;
+  i = 0;
+  while (tmp > 0) {
+    if (tmp & 1) {
+      leds[XY(29, i)] = CRGB::Blue;
+    } else {
+      leds[XY(29, i)] = CRGB::Red;
+    }
+    i++;
+    tmp = tmp >> 1;
+  }
+
   FastLED.show();
 
   //  Serial.print("xpos = ");
@@ -174,7 +198,7 @@ void draw() {
 void snake_setup() {
   GameOver = false;
   fruitX = rand() % w;
-  fruitY = rand() % h;
+  fruitY = random(start_h, end_h);
   score = 0;
 }
 
@@ -187,8 +211,23 @@ void snake_loop() {
     delay(5);
   }
 
-  if(GameOver == true) {
-
+  if (GameOver == true) {
+    if (score > highScore_snake) {
+      highScore_snake = score;
+      writeHighScore();
+      hsAnimation();
+      unsigned int tmp = highScore_snake;
+      int i = 0;
+      while (tmp > 0) {
+        if (tmp & 1) {
+          leds[XY(29, i)] = CRGB::Blue;
+        } else {
+          leds[XY(29, i)] = CRGB::Red;
+        }
+        i++;
+        tmp = tmp >> 1;
+      }
+    }
     deathAnimation();
 
     for (int j = 0; j < kMatrixHeight; j++) {
@@ -221,7 +260,7 @@ void snake_loop() {
     //      }
     //      FastLED.show();
     //    }
-  
+
     //GameOver = false;
     nTail = 3;
   }

@@ -36,12 +36,14 @@ const int yPotPin = A1;
 
 const int w = kMatrixWidth;
 const int h = kMatrixHeight;
+const int start_h = 16;
+const int end_h = h;
 
 bool GameOver;
 bool GameOver_tetris;
 bool GameOver_snake;
 bool selection;
-int x, y,  highScore;
+int x, y,  highScore_snake, highScore_tetris;
 String game = "none";
 void home_screen();
 void game_selection();
@@ -194,15 +196,22 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
 
 uint8_t readHighScore() {
   static uint8_t tmpScore = 0;
-  static uint8_t memHighScore = 0;
+  static uint8_t memHighScore_snake = 0;
+  static uint8_t memHighScore_tetris = 0;
 
   for (int i = 0; i < 1024; i++) {
     tmpScore = EEPROM.read(i);
-    if (tmpScore > memHighScore) {
-      memHighScore = tmpScore;
+    if (game == "snake" && tmpScore > memHighScore_snake) {
+      memHighScore_snake = tmpScore;
+      return memHighScore_snake;
     }
+    
+    if (game == "tetris" && tmpScore > memHighScore_tetris) {
+      memHighScore_tetris = tmpScore;
+    }
+    return memHighScore_tetris;
   }
-  return memHighScore;
+  
 }
 
 void writeHighScore() {
@@ -210,7 +219,12 @@ void writeHighScore() {
   while (EEPROM.read(tmpAdr) != 0) {
     tmpAdr++;
   }
-  EEPROM.write(tmpAdr, highScore);
+  if (game == "snake"){
+    EEPROM.write(tmpAdr, highScore_snake);
+  }
+  else if (game == "tetris"){
+    EEPROM.write(tmpAdr, highScore_tetris);
+  }
 }
 
 void deathAnimation() {
@@ -275,9 +289,13 @@ void setup() {
 
   x = w / 2;
   y = h / 2;
-
-  highScore = readHighScore();
-  Serial1.println(highScore);
+  if (game == "snake"){
+    highScore_snake = readHighScore();
+  }
+  else if (game == "tetris"){
+    highScore_tetris = readHighScore();
+  }
+  
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
   GameOver = true;
@@ -291,8 +309,9 @@ void setup() {
 
 //snake_setup();
 //tetris_setup();
-
+void tester();
 void loop() {
+  
   if (GameOver){
     clearScreen();
     home_screen();
@@ -305,7 +324,6 @@ void loop() {
   }
   else if (game == "tetris") {
     tetris_loop();
-    
-  }
+    }  
 
 }

@@ -62,3 +62,9 @@
   }
 }
 */
+
+void tester() {
+  int test = random(7);
+  Serial.println(test);
+  delay(1000);
+}

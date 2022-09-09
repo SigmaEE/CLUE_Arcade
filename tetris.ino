@@ -194,7 +194,7 @@ void render(void)
     i++;
     tmp = tmp >> 1;
   }
-  tmp = highScore;
+  tmp = highScore_tetris;
   i = 0;
   while (tmp > 0) {
     if (tmp & 1) {
@@ -337,8 +337,8 @@ void tetris_setup()
 void tetris_loop() {
   long int current_time;
   if (GameOver_tetris) {
-    if (score > highScore) {
-      highScore = score;
+    if (score > highScore_tetris) {
+      highScore_tetris = score;
       writeHighScore();
       hsAnimation();
     }
