@@ -197,7 +197,7 @@ void render(void)
     i++;
     tmp = tmp >> 1;
   }
-  tmp = highScore;
+  tmp = highScore_tetris;
   i = 0;
   while (tmp > 0) {
     if (tmp & 1) {
@@ -338,6 +338,7 @@ void tetris_setup()
   new_piece(&active_piece);
   render();
   GameOver = false;
+  GameOver_tetris = false;
 }
 
 #ifdef POSIX_BUILD
@@ -349,9 +350,9 @@ int millis(void)
 
 void tetris_loop() {
   long int current_time;
-  if (GameOver) {
-    if (score > highScore) {
-      highScore = score;
+  if (GameOver_tetris) {
+    if (score > highScore_tetris) {
+      highScore_tetris = score;
 #ifndef POSIX_BUILD
       writeHighScore();
       hsAnimation();
@@ -361,6 +362,7 @@ void tetris_loop() {
     deathAnimation();
 #endif
 
+    GameOver = true;
     //return;
     //GameOver = false;
     last_tick = millis();
@@ -398,7 +400,7 @@ void tetris_loop() {
       new_piece(&active_piece);
       if (0 == try_move_piece(&active_piece, 0, 0)) {
         // game over!
-        GameOver = true;
+        GameOver_tetris = true;
       }
     }
     last_tick = millis();

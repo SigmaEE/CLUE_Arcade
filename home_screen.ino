@@ -1,29 +1,53 @@
 int letter[Letter_size_row][Letter_size_col];
+
+int line_margin = 2;
+int word_margin = 4;
+
 int clue_length = 4;
-int clue_start_pos_col = 24;
+int clue_start_pos_col = (kMatrixWidth - 1) - 5;
 int clue_start_pos_row = 0;
 
 int arcade_length = 6;
-int arcade_start_pos_col = 29;
-int arcade_start_pos_row = clue_start_pos_row + Letter_size_row + 1;
-
-int tetris_length = 6;
-int tetris_start_pos_col = 29;
-int tetris_start_pos_row = kMatrixHeight - Letter_size_row - 1;
+int arcade_start_pos_col = (kMatrixWidth - 1);
+int arcade_start_pos_row = clue_start_pos_row + (Letter_size_row - 1) + line_margin;
 
 int snake_length = 5;
-int snake_start_pos_col = 26;
-int snake_start_pos_row = arcade_start_pos_row + Letter_size_row + 8;
+int snake_intake = 0;
+int snake_start_pos_col = (kMatrixWidth - 1) - snake_intake;
+int snake_start_pos_row = arcade_start_pos_row + (Letter_size_row - 1) + 8;
 
-int arrow_up_start_pos_col = kMatrixWidth/2 + Arrow_size_col/2;
-int arrow_up_start_pos_row = snake_start_pos_row + Letter_size_row + 3;
+int line1_start_pos_row = snake_start_pos_row - line_margin;
+int line_intake = 0;
+int line1_start_pos_col = (kMatrixWidth - 1 - line_intake);
+int line1_length = (kMatrixWidth - line_intake * 2);
 
-int arrow_down_start_pos_col = kMatrixWidth/2 + Arrow_size_col/2;
-int arrow_down_start_pos_row = tetris_start_pos_row - Arrow_size_row - 3;
+int line2_start_pos_row = snake_start_pos_row + (Letter_size_row - 1) + line_margin;
+int line2_start_pos_col = (kMatrixWidth - 1 - line_intake);
+int line2_length = (kMatrixWidth - line_intake * 2);
 
-void clue_word(){
+int tetris_length = 6;
+int tetris_start_pos_col = (kMatrixWidth - 1);
+int tetris_start_pos_row = snake_start_pos_row + (Letter_size_row - 1) + word_margin;
 
-  
+int seting_length = 6;
+int seting_start_pos_col = (kMatrixWidth - 1);
+int seting_start_pos_row = tetris_start_pos_row + (Letter_size_row - 1) + word_margin;
+
+int arrow_down_start_pos_col = kMatrixWidth / 2 + Arrow_size_col / 2;
+int arrow_down_start_pos_row = kMatrixHeight - Arrow_size_row;
+
+int arrow_up_start_pos_col = kMatrixWidth / 2 + Arrow_size_col / 2;
+int arrow_up_start_pos_row = arrow_down_start_pos_row - (Letter_size_row - 1) - 1;
+
+int arrow_right_start_pos_col = snake_start_pos_col - snake_length * (Letter_size_col + 1);
+int arrow_right_start_pos_row = snake_start_pos_row;
+
+int scroll_move = 0;
+
+
+void clue_word() {
+
+
   for (int current_letter = 0; current_letter < clue_length; current_letter++) { //itterating through each letter in the word we want to write.
     switch (current_letter) {
       case 0: memcpy(letter, C_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
@@ -42,7 +66,7 @@ void clue_word(){
   }
 }
 
-void arcade_word(){
+void arcade_word() {
   for (int current_letter = 0; current_letter < arcade_length; current_letter++) { //itterating through each letter in the word we want to write.
     switch (current_letter) {
       case 0: memcpy(letter, A_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
@@ -63,9 +87,9 @@ void arcade_word(){
   }
 }
 
-void tetris_word(int start_pos_row, int start_pos_col){
+void tetris_word(int start_pos_row, int start_pos_col) {
   for (int current_letter = 0; current_letter < tetris_length; current_letter++) { //itterating through each letter in the word we want to write.
-    
+
     switch (current_letter) {
       case 0: memcpy(letter, T_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
       case 1: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
@@ -74,10 +98,10 @@ void tetris_word(int start_pos_row, int start_pos_col){
       case 4: memcpy(letter, I_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
       case 5: memcpy(letter, S_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
     }
-    
+
 
     for (int col = 0; col < Letter_size_col; col++) {
-      
+
       for (int row = 0; row < Letter_size_row; row++) {
         if (letter[row][col] == 1) {
           leds[XY(start_pos_col - (Letter_size_col + 1) * current_letter - col, start_pos_row + row)] = CRGB::Red;
@@ -87,9 +111,33 @@ void tetris_word(int start_pos_row, int start_pos_col){
   }
 }
 
-void snake_word(){
+void seting_word(int start_pos_row, int start_pos_col) {
+  for (int current_letter = 0; current_letter < seting_length; current_letter++) { //itterating through each letter in the word we want to write.
+
+    switch (current_letter) {
+      case 0: memcpy(letter, S_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
+      case 1: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
+      case 2: memcpy(letter, T_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
+      case 3: memcpy(letter, I_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
+      case 4: memcpy(letter, N_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
+      case 5: memcpy(letter, G_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
+    }
+
+
+    for (int col = 0; col < Letter_size_col; col++) {
+
+      for (int row = 0; row < Letter_size_row; row++) {
+        if (letter[row][col] == 1) {
+          leds[XY(start_pos_col - (Letter_size_col + 1) * current_letter - col, start_pos_row + row)] = CRGB::Green;
+        }
+      }
+    }
+  }
+}
+
+void snake_word() {
   for (int current_letter = 0; current_letter < snake_length; current_letter++) { //itterating through each letter in the word we want to write.
-    
+
     switch (current_letter) {
       case 0: memcpy(letter, S_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
       case 1: memcpy(letter, N_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
@@ -97,10 +145,10 @@ void snake_word(){
       case 3: memcpy(letter, K_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
       case 4: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
     }
-    
+
 
     for (int col = 0; col < Letter_size_col; col++) {
-      
+
       for (int row = 0; row < Letter_size_row; row++) {
         if (letter[row][col] == 1) {
           leds[XY(snake_start_pos_col - (Letter_size_col + 1) * current_letter - col, snake_start_pos_row + row)] = CRGB::Yellow;
@@ -110,73 +158,146 @@ void snake_word(){
   }
 }
 
-void arrow_up_sign(){ 
+void arrow_up_sign() {
 
-    for (int col = 0; col < Arrow_size_col; col++) {
-      for (int row = 0; row < Arrow_size_row; row++) {
-        if (Arrow_up[row][col] == 1) {
-          leds[XY(arrow_up_start_pos_col - col, arrow_up_start_pos_row + row)] = CRGB::White;
-        }
+  for (int col = 0; col < Arrow_size_col; col++) {
+    for (int row = 0; row < Arrow_size_row; row++) {
+      if (Arrow_up[row][col] == 1) {
+        leds[XY(arrow_up_start_pos_col - col, arrow_up_start_pos_row + row)] = CRGB::White;
       }
     }
   }
+}
 
-void arrow_down_sign(){ 
+void arrow_down_sign() {
 
-    for (int col = 0; col < Arrow_size_col; col++) {
-      for (int row = 0; row < Arrow_size_row; row++) {
-        if (Arrow_down[row][col] == 1) {
-          leds[XY(arrow_down_start_pos_col - col, arrow_down_start_pos_row + row)] = CRGB::White;
-        }
+  for (int col = 0; col < Arrow_size_col; col++) {
+    for (int row = 0; row < Arrow_size_row; row++) {
+      if (Arrow_down[row][col] == 1) {
+        leds[XY(arrow_down_start_pos_col - col, arrow_down_start_pos_row + row)] = CRGB::White;
       }
     }
   }
+}
 
-void home_screen() 
+void arrow_right_sign(int scroll_move) {
+
+  for (int col = 0; col < Arrow_size_col; col++) {
+    for (int row = 0; row < Arrow_size_row; row++) {
+      if (Arrow_right[row][col] == 1) {
+        leds[XY(arrow_right_start_pos_col - col, arrow_right_start_pos_row + row + scroll_move)] = CRGB::White;
+      }
+    }
+  }
+}
+
+void select_line(int line_start_pos_col, int line_length, int line_start_pos_row) {
+  for (int col = 0; col < (line_length); col++) {
+    leds[XY(line_start_pos_col - col, line_start_pos_row)] = CRGB::White;
+  }
+}
+void game_selection();
+void home_screen()
 {
   //delay(1000);
-  GameOver = false;
+  GameOver = true;
+  
   game = "";
   clue_word();
   arcade_word();
+  select_line(line1_start_pos_col, line1_length, line1_start_pos_row + scroll_move);
   snake_word();
+  //arrow_right_sign(scroll_move);
+  select_line(line2_start_pos_col, line2_length, line2_start_pos_row + scroll_move);
+  tetris_word(tetris_start_pos_row, tetris_start_pos_col);
+  seting_word(seting_start_pos_row, seting_start_pos_col);
   arrow_up_sign();
+  //draw_xpm(dummy_sprite, 10, 11);
   //int tetris_start_pos_row2 = arrow_down_start_pos_row - (arrow_down_start_pos_row - Arrow_size_row - arrow_up_start_pos_row)/2 - (Letter_size_row/2);
   //int tetris_start_pos_col2 = tetris_start_pos_col;
   //tetris_word(tetris_start_pos_row2, tetris_start_pos_col2);
   arrow_down_sign();
-  tetris_word(tetris_start_pos_row, tetris_start_pos_col);
-  
-  
+
+
+
+
   FastLED.show();
   //delay(1500);
 
-  Serial.println(game);
-  delay(1000);
-
+  //game_selection();
+}
+void game_selection() {
   int action = check_input();
-  Serial.print("action is: ");
-  Serial.println(action);
-  
-  while (action == ACT_NONE || action == ACT_R || action == ACT_L) { //home screen stays until up or down input on joystick
+  if (selection == false) {
+    //Serial.println("First loop");
     action = check_input();
-    delay(1);
-    Serial.print("action is: ");
-    Serial.println(action);
+    
+    while (action == ACT_NONE || action == ACT_L) { //home screen stays until up or down input on joystick
+      //Serial.println("while loop");
+      action = check_input();
+      //Serial.println(action);
+      //game_selection();
+      delay(1);
+
+      if (action & ACT_U) {
+      if (scroll_move > 0) {
+        scroll_move -= (Letter_size_row + word_margin - 1);
+        
+        Serial.println(action);
+        Serial.println("up");
+        break;
+        //clearScreen();
+        //home_screen();
+      }
+
+
+    }
+    if (action & ACT_D) {
+      if (scroll_move < 2 * (Letter_size_row + word_margin - 1)) {
+        scroll_move += (Letter_size_row + word_margin - 1);
+        
+        Serial.println("down");
+        Serial.println(action);
+        break;
+        //clearScreen();
+        //home_screen();
+      }
     }
 
-  Serial.println("while loop over");
-  if (action & ACT_U) {
-    game = "snake";
-  }
-  if (action & ACT_D) {
-    game = "tetris";
-  }
+    if (action & ACT_R) {
+      Serial.println("right");
+      Serial.println("action is: ");
+      Serial.println(action);
+      Serial.println(selection);
+      selection = true;
+      Serial.println(selection);
+      Serial.println(scroll_move);
+      delay(1);
+      //break;
+    }
+    }
+    
 
-  if (game == "snake") {
-    snake_setup();
+    
+    
+
   }
-  else if (game == "tetris") {
-    tetris_setup();
+  else {
+    Serial.println("Exited while loop");
+    if (scroll_move == 0 * (Letter_size_row + word_margin - 1)) {
+      game = "snake";
+    } else {
+      game = "tetris";
+    }
+    Serial.println("game selected");
+    Serial.println(game);
+    if (game == "snake") {
+      snake_setup();
+    } else if (game == "tetris") {
+      tetris_setup();
+    }
+    Serial.println("setted up");
+    selection = false;
+    GameOver = false;
   }
 }
