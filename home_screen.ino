@@ -1,10 +1,10 @@
-int letter[Letter_size_row][Letter_size_col];
+//int line_margin = 2;
+//int word_margin = 4;
 
-int line_margin = 2;
-int word_margin = 4;
+int scroll_move_home = 0;
 
 int clue_length = 4;
-int clue_start_pos_col = (kMatrixWidth - 1) - 5;
+int clue_start_pos_col = (kMatrixWidth/2 - 1) + ((Letter_size_col + 1) * (clue_length - 1) + Letter_size_col)/2;
 int clue_start_pos_row = 0;
 
 int arcade_length = 6;
@@ -17,7 +17,7 @@ int snake_start_pos_col = (kMatrixWidth - 1) - snake_intake;
 int snake_start_pos_row = arcade_start_pos_row + (Letter_size_row - 1) + 8;
 
 int line1_start_pos_row = snake_start_pos_row - line_margin;
-int line_intake = 0;
+//int line_intake = 0;
 int line1_start_pos_col = (kMatrixWidth - 1 - line_intake);
 int line1_length = (kMatrixWidth - line_intake * 2);
 
@@ -29,9 +29,9 @@ int tetris_length = 6;
 int tetris_start_pos_col = (kMatrixWidth - 1);
 int tetris_start_pos_row = snake_start_pos_row + (Letter_size_row - 1) + word_margin;
 
-int seting_length = 6;
-int seting_start_pos_col = (kMatrixWidth - 1);
-int seting_start_pos_row = tetris_start_pos_row + (Letter_size_row - 1) + word_margin;
+//int seting_length = 6;
+int seting_home_start_pos_col = (kMatrixWidth - 1);
+int seting_home_start_pos_row = tetris_start_pos_row + (Letter_size_row - 1) + word_margin;
 
 int arrow_down_start_pos_col = kMatrixWidth / 2 + Arrow_size_col / 2;
 int arrow_down_start_pos_row = kMatrixHeight - Arrow_size_row;
@@ -42,10 +42,10 @@ int arrow_up_start_pos_row = arrow_down_start_pos_row - (Letter_size_row - 1) - 
 int arrow_right_start_pos_col = snake_start_pos_col - snake_length * (Letter_size_col + 1);
 int arrow_right_start_pos_row = snake_start_pos_row;
 
-int scroll_move = 0;
 
 
-void clue_word() {
+
+void clue_word(int clue_start_pos_col, int clue_start_pos_row) {
 
 
   for (int current_letter = 0; current_letter < clue_length; current_letter++) { //itterating through each letter in the word we want to write.
@@ -66,7 +66,7 @@ void clue_word() {
   }
 }
 
-void arcade_word() {
+void arcade_word(int arcade_start_pos_col, int arcade_start_pos_row) {
   for (int current_letter = 0; current_letter < arcade_length; current_letter++) { //itterating through each letter in the word we want to write.
     switch (current_letter) {
       case 0: memcpy(letter, A_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
@@ -135,7 +135,7 @@ void seting_word(int start_pos_row, int start_pos_col) {
   }
 }
 
-void snake_word() {
+void snake_word(int snake_start_pos_col, int snake_start_pos_row) {
   for (int current_letter = 0; current_letter < snake_length; current_letter++) { //itterating through each letter in the word we want to write.
 
     switch (current_letter) {
@@ -158,42 +158,42 @@ void snake_word() {
   }
 }
 
-void arrow_up_sign() {
+void arrow_up_sign(int arrow_start_pos_col, int arrow_start_pos_row) {
 
   for (int col = 0; col < Arrow_size_col; col++) {
     for (int row = 0; row < Arrow_size_row; row++) {
       if (Arrow_up[row][col] == 1) {
-        leds[XY(arrow_up_start_pos_col - col, arrow_up_start_pos_row + row)] = CRGB::White;
+        leds[XY(arrow_start_pos_col - col, arrow_start_pos_row + row)] = CRGB::White;
       }
     }
   }
 }
 
-void arrow_down_sign() {
+void arrow_down_sign(int arrow_start_pos_col, int arrow_start_pos_row) {
 
   for (int col = 0; col < Arrow_size_col; col++) {
     for (int row = 0; row < Arrow_size_row; row++) {
       if (Arrow_down[row][col] == 1) {
-        leds[XY(arrow_down_start_pos_col - col, arrow_down_start_pos_row + row)] = CRGB::White;
+        leds[XY(arrow_start_pos_col - col, arrow_start_pos_row + row)] = CRGB::White;
       }
     }
   }
 }
 
-void arrow_right_sign(int scroll_move) {
+void arrow_right_sign(int arrow_start_pos_col, int arrow_start_pos_row, int scroll_move_home) {
 
   for (int col = 0; col < Arrow_size_col; col++) {
     for (int row = 0; row < Arrow_size_row; row++) {
       if (Arrow_right[row][col] == 1) {
-        leds[XY(arrow_right_start_pos_col - col, arrow_right_start_pos_row + row + scroll_move)] = CRGB::White;
+        leds[XY(arrow_start_pos_col - col, arrow_start_pos_row + row + scroll_move_home)] = CRGB::White;
       }
     }
   }
 }
 
-void select_line(int line_start_pos_col, int line_length, int line_start_pos_row) {
+void select_line(int line_start_pos_col, int line_length, int line_start_pos_row, int scroll_move_home = 0) {
   for (int col = 0; col < (line_length); col++) {
-    leds[XY(line_start_pos_col - col, line_start_pos_row)] = CRGB::White;
+    leds[XY(line_start_pos_col - col, line_start_pos_row + scroll_move_home)] = CRGB::White;
   }
 }
 void game_selection();
@@ -202,21 +202,21 @@ void home_screen()
   //delay(1000);
   GameOver = true;
   
-  game = "";
-  clue_word();
-  arcade_word();
-  select_line(line1_start_pos_col, line1_length, line1_start_pos_row + scroll_move);
-  snake_word();
-  //arrow_right_sign(scroll_move);
-  select_line(line2_start_pos_col, line2_length, line2_start_pos_row + scroll_move);
+  choice  = "";
+  clue_word(clue_start_pos_col, clue_start_pos_row);
+  arcade_word(arcade_start_pos_col, arcade_start_pos_row);
+  select_line(line1_start_pos_col, line1_length, line1_start_pos_row, scroll_move_home);
+  snake_word(snake_start_pos_col, snake_start_pos_row);
+  //arrow_right_sign(scroll_move_home);
+  select_line(line2_start_pos_col, line2_length, line2_start_pos_row, scroll_move_home);
   tetris_word(tetris_start_pos_row, tetris_start_pos_col);
-  seting_word(seting_start_pos_row, seting_start_pos_col);
-  arrow_up_sign();
+  seting_word(seting_home_start_pos_row, seting_home_start_pos_col);
+  arrow_up_sign(arrow_up_start_pos_col, arrow_up_start_pos_row);
   //draw_xpm(dummy_sprite, 10, 11);
   //int tetris_start_pos_row2 = arrow_down_start_pos_row - (arrow_down_start_pos_row - Arrow_size_row - arrow_up_start_pos_row)/2 - (Letter_size_row/2);
   //int tetris_start_pos_col2 = tetris_start_pos_col;
   //tetris_word(tetris_start_pos_row2, tetris_start_pos_col2);
-  arrow_down_sign();
+  arrow_down_sign(arrow_down_start_pos_col, arrow_down_start_pos_row);
 
 
 
@@ -240,25 +240,25 @@ void game_selection() {
       delay(1);
 
       if (action & ACT_U) {
-      if (scroll_move > 0) {
-        scroll_move -= (Letter_size_row + word_margin - 1);
-        
-        Serial.println(action);
-        Serial.println("up");
-        break;
-        //clearScreen();
-        //home_screen();
-      }
+        if (scroll_move_home > 0) {
+          scroll_move_home -= (Letter_size_row + word_margin - 1);
+          
+          Serial.println(action);
+          Serial.println("up");
+          //break;
+          //clearScreen();
+          //home_screen();
+        }
 
 
     }
     if (action & ACT_D) {
-      if (scroll_move < 2 * (Letter_size_row + word_margin - 1)) {
-        scroll_move += (Letter_size_row + word_margin - 1);
+      if (scroll_move_home < 2 * (Letter_size_row + word_margin - 1)) {
+        scroll_move_home += (Letter_size_row + word_margin - 1);
         
         Serial.println("down");
         Serial.println(action);
-        break;
+        //break;
         //clearScreen();
         //home_screen();
       }
@@ -271,7 +271,7 @@ void game_selection() {
       Serial.println(selection);
       selection = true;
       Serial.println(selection);
-      Serial.println(scroll_move);
+      Serial.println(scroll_move_home);
       delay(1);
       //break;
     }
@@ -284,16 +284,20 @@ void game_selection() {
   }
   else {
     Serial.println("Exited while loop");
-    if (scroll_move == 0 * (Letter_size_row + word_margin - 1)) {
-      game = "snake";
-    } else {
-      game = "tetris";
+    if (scroll_move_home == 0 * (Letter_size_row + word_margin - 1)) {
+      choice  = "snake";
+    } 
+    else if (scroll_move_home == 1 * (Letter_size_row + word_margin - 1)){
+      choice  = "tetris";
+    }
+    else {
+      choice  = "setting";
     }
     Serial.println("game selected");
-    Serial.println(game);
-    if (game == "snake") {
+    Serial.println(choice );
+    if (choice  == "snake") {
       snake_setup();
-    } else if (game == "tetris") {
+    } else if (choice  == "tetris") {
       tetris_setup();
     }
     Serial.println("setted up");

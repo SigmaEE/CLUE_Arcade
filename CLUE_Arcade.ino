@@ -6,7 +6,7 @@
 #define COLOR_ORDER GRB
 #define CHIPSET     WS2812B
 
-#define BRIGHTNESS 50
+int BRIGHTNESS = 50;
 #define Letter_size_row 5
 #define Letter_size_col 4
 #define Arrow_size_row 5
@@ -19,6 +19,11 @@
 #define ACT_U (1 << 3)
 #define ACT_RN (1 << 4)
 #define ACT_Q  (1 << 5)
+
+#define first_snake_score_adress 0
+#define last_snake_score_adress 255
+#define first_tetris_score_adress 256
+#define last_tetris_score_adress 512
 
 
 
@@ -44,7 +49,8 @@ bool GameOver_tetris;
 bool GameOver_snake;
 bool selection;
 int x, y,  highScore_snake, highScore_tetris;
-String game = "none";
+int letter[Letter_size_row][Letter_size_col];
+String choice  = "none";
 void home_screen();
 void game_selection();
 int check_input();
@@ -156,18 +162,19 @@ void clearScreen() {
   //FastLED.show();
 }
 
-char * dummy_sprite[]={
-"5 5 5 1",
-". c #660000",
-"b c #56f9ff",
-"# c #92f4df",
-"a c #67efbf",
-"c c #15e781",
-".....",
-".....",
-"..#..",
-".aba.",
-"ca#ac"};
+char * dummy_sprite[] = {
+  "5 5 5 1",
+  ". c #660000",
+  "b c #56f9ff",
+  "# c #92f4df",
+  "a c #67efbf",
+  "c c #15e781",
+  ".....",
+  ".....",
+  "..#..",
+  ".aba.",
+  "ca#ac"
+};
 
 // example usage: draw_xpm(dummy_sprite, 10, 10);
 void draw_xpm(char * xpm[], int xofs, int yofs)
@@ -198,37 +205,57 @@ uint8_t readHighScore() {
   static uint8_t tmpScore = 0;
   static uint8_t memHighScore_snake = 0;
   static uint8_t memHighScore_tetris = 0;
-
-  for (int i = 0; i < 1024; i++) {
-    tmpScore = EEPROM.read(i);
-    if (game == "snake" && tmpScore > memHighScore_snake) {
-      memHighScore_snake = tmpScore;
-      return memHighScore_snake;
+  if (choice == "snake") {
+    for (int i = first_snake_score_adress; i < last_snake_score_adress + 1; i++) {
+      tmpScore = EEPROM.read(i);
+      if (tmpScore > memHighScore_snake) {
+        memHighScore_snake = tmpScore;
+      }
     }
-    
-    if (game == "tetris" && tmpScore > memHighScore_tetris) {
-      memHighScore_tetris = tmpScore;
+  }
+  else if (choice == "tetris") {
+    for (int i = first_tetris_score_adress; i < last_tetris_score_adress + 1; i++) {
+      tmpScore = EEPROM.read(i);
+      if (tmpScore > memHighScore_tetris) {
+        memHighScore_tetris = tmpScore;
+      }
     }
+  }
+  if (choice  == "snake") {
+    Serial.println("snake highscore = ");
+    Serial.println(memHighScore_snake);
+    return memHighScore_snake;
+  }
+  else if (choice  = "tetris") {
     return memHighScore_tetris;
   }
-  
+
 }
 
 void writeHighScore() {
-  static uint8_t tmpAdr = 0;
-  while (EEPROM.read(tmpAdr) != 0) {
-    tmpAdr++;
-  }
-  if (game == "snake"){
+  Serial.println("write highscore");
+  Serial.print("Game = ");
+  Serial.println(choice );
+  int tmpAdr = 0;
+  if (choice  == "snake") {
+    tmpAdr = first_snake_score_adress;
+    while (EEPROM.read(tmpAdr) != 0 && tmpAdr <= last_snake_score_adress) {
+      tmpAdr++;
+    }
     EEPROM.write(tmpAdr, highScore_snake);
   }
-  else if (game == "tetris"){
+  else if (choice  == "tetris") {
+    tmpAdr = first_tetris_score_adress;
+    while (EEPROM.read(tmpAdr) != 0 && tmpAdr <= last_tetris_score_adress) {
+      tmpAdr++;
+      delay(100);
+    }
     EEPROM.write(tmpAdr, highScore_tetris);
+    
   }
 }
 
 void deathAnimation() {
-  Serial.println("pre animation");
 
   delay(100);
   for (int i = -1; i < 2; i++) {
@@ -265,8 +292,6 @@ void deathAnimation() {
 
   FastLED.show();
   delay(100);
-
-  Serial.println("animation");
 }
 
 void hsAnimation() {
@@ -284,25 +309,26 @@ void hsAnimation() {
 }
 
 void setup() {
+  delay(1000);
   Serial1.begin(9600);
   Serial1.println("Setting up");
 
   x = w / 2;
   y = h / 2;
-  if (game == "snake"){
-    highScore_snake = readHighScore();
-  }
-  else if (game == "tetris"){
-    highScore_tetris = readHighScore();
-  }
-  
+  choice  = "snake";
+  highScore_snake = readHighScore();
+  choice  = "tetris";
+  highScore_tetris = readHighScore();
+  choice  = "";
+
+
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
   GameOver = true;
   selection = false;
   //clearScreen();
   //home_screen();
-  
+
 }
 
 // leds[XY(tailX[nTail], tailY[nTail])] = CRGB::Black;
@@ -310,20 +336,33 @@ void setup() {
 //snake_setup();
 //tetris_setup();
 void tester();
+void bright_setting();
 void loop() {
-  
-  if (GameOver){
+
+  if (GameOver) {
     clearScreen();
     home_screen();
     game_selection();
-    
+
   }
+
+
   //GameOver = false;
-  if (game == "snake") {
+  if (choice  == "snake") {
     snake_loop();
   }
-  else if (game == "tetris") {
+  else if (choice  == "tetris") {
     tetris_loop();
-    }  
+  }
+
+  else if (choice  == "setting") {
+    Serial.println("setting chosen");
+    clearScreen();
+    setting_screen();
+
+    if (choice == "bright") {
+      bright_setting();
+    }
+  }
 
 }

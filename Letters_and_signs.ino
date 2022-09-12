@@ -26,6 +26,14 @@ int A_letter[Letter_size_row][Letter_size_col] = {  { 0, 1, 1, 0 },
                                                     { 1, 0, 0, 1 }
                                                   };
 
+int B_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 0 },
+                                                    { 1, 0, 0, 1 },
+                                                    { 1, 1, 1, 0 },
+                                                    { 1, 0, 0, 1 },
+                                                    { 1, 1, 1, 0 }
+    };
+
+
 int C_letter[Letter_size_row][Letter_size_col] = {  { 0, 1, 1, 1 },
                                                     { 1, 0, 0, 0 },
                                                     { 1, 0, 0, 0 },
@@ -54,7 +62,15 @@ int G_letter[Letter_size_row][Letter_size_col] = {  { 0, 1, 1, 1 },
                                                     { 1, 0, 0, 1 },
                                                     { 0, 1, 1, 1 }
                                                   };                                                  
+
+int H_letter[Letter_size_row][Letter_size_col] = {  { 1, 0, 0, 1 },
+                                                    { 1, 0, 0, 1 },
+                                                    { 1, 1, 1, 1 },
+                                                    { 1, 0, 0, 1 },
+                                                    { 1, 0, 0, 1 }
+    };
                                                   
+
 int I_letter[Letter_size_row][Letter_size_col] = {  { 1, 1, 1, 1 },
                                                     { 0, 1, 1, 0 },
                                                     { 0, 1, 1, 0 },

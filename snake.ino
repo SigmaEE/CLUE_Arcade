@@ -43,7 +43,6 @@ void inPut() {
   }
 }
 void fruitAnimation() {
-  Serial.println("pre animation");
 
   delay(100);
   for (int i = -1; i < 2; i++) {
@@ -80,10 +79,6 @@ void fruitAnimation() {
 
   FastLED.show();
   delay(100);
-
-
-
-  Serial.println("animation");
 }
 
 void logic() {
@@ -213,7 +208,11 @@ void snake_loop() {
 
   if (GameOver == true) {
     if (score > highScore_snake) {
+      Serial.print("old highscore = ");
+      Serial.println(highScore_snake);
       highScore_snake = score;
+      Serial.print("new highscore = ");
+      Serial.println(highScore_snake);
       writeHighScore();
       hsAnimation();
       unsigned int tmp = highScore_snake;
