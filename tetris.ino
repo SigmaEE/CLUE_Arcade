@@ -1,25 +1,14 @@
-#ifdef POSIX_BUILD
-# define CONSOLE_INPUT
-# include <time.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <string.h>
-# include <sys/ioctl.h>
-# include <termios.h>
-#else
+#ifndef POSIX_BUILD
 # include <FastLED.h>
 # include <EEPROM.h>
 #endif
 
 #define ROWS 20
 #define COLUMNS 10
-
 int field[ROWS][COLUMNS] = { 0 };
 
 #define PWIDTH 4
 #define PHEIGHT 4
-
 struct piece {
   int origin_x;
   int origin_y;
@@ -28,12 +17,12 @@ struct piece {
   int squares[PHEIGHT][PWIDTH];
 };
 
-// forward declarations
+long int last_tick;
+
+// forward declaration
 int try_move_piece(struct piece * p, int dy, int dx);
 
 struct piece active_piece;
-struct piece temp_piece;
-struct piece default_piece = { 3, 0, 0 };
 
 #define PTYPES 7
 char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4] = {
@@ -110,18 +99,20 @@ void get_shape(struct piece * p, int type, int rotation)
 // nah. not in first impl.
 void rotate_piece(struct piece * p, int steps)
 {
-  temp_piece = *p;
+  struct piece original_piece = *p;
   p->rotation += 4 + steps;
   p->rotation = active_piece.rotation % 4;
   get_shape(p, p->type, p->rotation);
   if (!try_move_piece(p, 0, 0)) {
-    *p = temp_piece;
+    *p = original_piece;
   }
 }
 
 void new_piece(struct piece * p)
 {
-  *p = default_piece;
+  p->origin_x = 3;
+  p->origin_y = 0;
+  p->rotation = 0;
   p->type = random() % PTYPES;
   get_shape(p, p->type, p->rotation);
 }
@@ -287,43 +278,6 @@ int try_move_piece(struct piece * p, int dy, int dx)
   return 1;
 }
 
-
-
-/*
-  void test_game(void)
-  {
-  for (int i = 0; i < 1; ++i) {
-    try_move_piece(&active_piece, 0, (random() % 3) - 1);
-    rotate_piece(&active_piece, (random() % 3) - 1);
-    if (0 == try_move_piece(&active_piece, 1, 0)) {
-      stick_piece(&active_piece);
-      new_piece(&active_piece);
-      if (0 == try_move_piece(&active_piece, 0, 0)) {
-        // game over!
-        printf("Game over after %d moves\n", i);
-        break;
-      }
-    }
-    render();
-    usleep(100000);
-  }
-  }
-*/
-
-#ifdef POSIX_TIME
-int time_delta(struct timespec * t1, struct timespec * t2)
-{
-  // return delta in milliseconds
-  int delta = 0;
-  delta = 1000 * (t2->tv_sec - t1->tv_sec);
-  delta += (t2->tv_nsec - t1->tv_nsec) / (1000 * 1000);;
-  return delta;
-}
-#endif
-
-//int tetris_gameover = 0;
-long int last_tick;
-
 void tetris_setup()
 {
   for (int y = 0; y < ROWS; ++y) {
@@ -341,26 +295,16 @@ void tetris_setup()
   GameOver_tetris = false;
 }
 
-#ifdef POSIX_BUILD
-int millis(void)
-{
-	return 0;
-}
-#endif
 
 void tetris_loop() {
   long int current_time;
   if (GameOver_tetris) {
     if (score > highScore_tetris) {
       highScore_tetris = score;
-#ifndef POSIX_BUILD
       writeHighScore();
       hsAnimation();
-#endif
     }
-#ifndef POSIX_BUILD
     deathAnimation();
-#endif
 
     GameOver = true;
     //return;

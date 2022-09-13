@@ -20,8 +20,6 @@
 #define ACT_RN (1 << 4)
 #define ACT_Q  (1 << 5)
 
-
-
 // Params for width and height
 const uint8_t kMatrixWidth = 30;
 const uint8_t kMatrixHeight = 58;
