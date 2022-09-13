@@ -300,9 +300,12 @@ void tetris_loop() {
   long int current_time;
   if (GameOver_tetris) {
     if (score > highScore_tetris) {
+      Serial.print("highscore!");
       highScore_tetris = score;
       writeHighScore();
+      Serial.print("highscore written''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''!");
       hsAnimation();
+      Serial.print("animation");
     }
     deathAnimation();
 
