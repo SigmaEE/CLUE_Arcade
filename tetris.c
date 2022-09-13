@@ -19,6 +19,17 @@
 #define ACT_RN (1 << 4)
 #define ACT_Q  (1 << 5)
 
+// stub Serial
+void Serial_print(char * s) {
+	puts(s);
+}
+
+struct {
+	void(*print)(char *);
+} Serial = {
+	.print = &Serial_print
+};
+
 int speed_delay = 1000;
 int score = 0;
 int GameOver = 0;
@@ -112,7 +123,7 @@ int millis(void)
   }
 */
 
-#include "tetris.ino"
+#include "CLUE_Arcade/tetris.ino"
 
 int main(int argc, char * argv[])
 {
