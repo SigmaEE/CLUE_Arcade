@@ -20,12 +20,10 @@ int line2_setting_start_pos_col = (kMatrixWidth - 1 - line_intake);
 int line2_setting_length = (kMatrixWidth - line_intake * 2);
 
 void select_line(int line_start_pos_col, int line_length, int line_start_pos_row, int scroll_move = 0);
-
 void seting_word(int start_pos_row, int start_pos_col);
 
 void bright_word(int start_pos_row, int start_pos_col) {
   for (int current_letter = 0; current_letter < bright_length; current_letter++) { //itterating through each letter in the word we want to write.
-
     switch (current_letter) {
       case 0: memcpy(letter, B_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
       case 1: memcpy(letter, R_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
@@ -34,7 +32,6 @@ void bright_word(int start_pos_row, int start_pos_col) {
       case 4: memcpy(letter, H_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
       case 5: memcpy(letter, T_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
     }
-
 
     for (int col = 0; col < Letter_size_col; col++) {
 
@@ -66,52 +63,35 @@ void setting_screen()
   bright_word(bright_start_pos_row, bright_start_pos_col);
   select_line(line2_setting_start_pos_col, line2_setting_length, line2_setting_start_pos_row, scroll_move_setting);
 
-
   FastLED.show();
-  //delay(1500);
-
   setting_selection();
-  //game_selection();
 }
 
 void setting_selection() {
   action = check_input();
   if (setting_selection == false) {
-    //Serial.println("First loop");
     action = check_input();
-    
+
     while (action == ACT_NONE) { //home screen stays until up or down input on joystick
-      //Serial.println("while loop");
       action = check_input();
-      //Serial.println(action);
-      //game_selection();
       delay(1);
     }
-      if (action & ACT_U) {
-        if (scroll_move_setting > 0) {
-          scroll_move_setting -= (Letter_size_row + word_margin - 1);
-          
-          Serial.println(action);
-          Serial.println("up");
-          //break;
-          //clearScreen();
-          //home_screen();
-        }
+    if (action & ACT_U) {
+      if (scroll_move_setting > 0) {
+        scroll_move_setting -= (Letter_size_row + word_margin - 1);
 
-
+        Serial.println(action);
+        Serial.println("up");
+      }
     }
     if (action & ACT_D) {
       if (scroll_move_setting < 1 * (Letter_size_row + word_margin - 1)) {
         scroll_move_setting += (Letter_size_row + word_margin - 1);
-        
+
         Serial.println("down");
         Serial.println(action);
-        //break;
-        //clearScreen();
-        //home_screen();
       }
     }
-
     if (action & ACT_R) {
       Serial.println("right");
       Serial.println("action is: ");
@@ -121,15 +101,8 @@ void setting_selection() {
       Serial.println(selection);
       Serial.println(scroll_move_setting);
       delay(1);
-      //break;
     }
-    
-
-    
-    
-
-    }
-  else {
+  } else {
     Serial.println("Exited while loop");
     if (scroll_move_setting == 0 * (Letter_size_row + word_margin - 1)) {
       choice = "bright";
@@ -145,23 +118,18 @@ void setting_selection() {
   }
 }
 
-void bright_setting(){
+void bright_setting() {
   Serial.print("Bright setting");
-
   while (action == ACT_NONE || action == ACT_U || action == ACT_D) { //home screen stays until up or down input on joystick
-      //Serial.println("while loop");
-      action = check_input();
-      //Serial.println(action);
-      //game_selection();
-      delay(1);
-    }
-  
+    action = check_input();
+    delay(1);
+  }
+
   if (action & ACT_R){
     BRIGHTNESS += 10;
     Serial.print("brightness +");
     Serial.print(BRIGHTNESS);
-  }
-  else if (action & ACT_L){
+  } else if (action & ACT_L){
     BRIGHTNESS -= 10;
     Serial.print("brightness -");
     Serial.print(BRIGHTNESS);

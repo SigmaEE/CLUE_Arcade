@@ -117,8 +117,6 @@ void new_piece(struct piece * p)
   get_shape(p, p->type, p->rotation);
 }
 
-
-
 void print_piece(struct piece * p)
 {
   for (int i = 0; i < PHEIGHT; ++i) {
@@ -310,8 +308,6 @@ void tetris_loop() {
     deathAnimation();
 
     GameOver = true;
-    //return;
-    //GameOver = false;
     last_tick = millis();
     new_piece(&active_piece);
     render();

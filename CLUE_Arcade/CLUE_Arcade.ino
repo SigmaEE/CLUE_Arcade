@@ -4,7 +4,7 @@
 #define LED_PIN  3
 
 #define COLOR_ORDER GRB
-#define CHIPSET     WS2812B
+#define CHIPSET WS2812B
 
 int BRIGHTNESS = 50;
 #define Letter_size_row 5
@@ -114,11 +114,6 @@ int check_input()
   xPotVal = analogRead(xPotPin);
   yPotVal = analogRead(yPotPin);
 
-  //Serial.print("xval = ");
-  //Serial.println(xPotVal);
-  //Serial.print("yval = ");
-  //Serial.println(yPotVal);
-
   current_time = millis();
 
   if ( xPotVal < 400) {
@@ -145,10 +140,6 @@ int check_input()
     }
   }
   return action;
-  // compare current input to new input.
-  // if new input then use it
-  // if repeating input (holds left, right or down)
-  // then dont use it until after some time has passed
 }
 
 void clearScreen() {
@@ -157,7 +148,6 @@ void clearScreen() {
       leds[XY(i, j)] = CRGB::Black;
     }
   }
-  //FastLED.show();
 }
 
 char * dummy_sprite[] = {
@@ -191,7 +181,6 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
 
         }
       }
-      // printf("(%02x%02x%02x)\n", r, g, b);
       leds[XY(xofs + x, yofs + y)].r = r;
       leds[XY(xofs + x, yofs + y)].g = g;
       leds[XY(xofs + x, yofs + y)].b = b;
@@ -249,7 +238,6 @@ void writeHighScore() {
       delay(100);
     }
     EEPROM.write(tmpAdr, highScore_tetris);
-    
   }
 }
 
@@ -319,20 +307,13 @@ void setup() {
   highScore_tetris = readHighScore();
   choice  = "";
 
-
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
   GameOver = true;
   selection = false;
-  //clearScreen();
-  //home_screen();
 
 }
 
-// leds[XY(tailX[nTail], tailY[nTail])] = CRGB::Black;
-
-//snake_setup();
-//tetris_setup();
 void tester();
 void bright_setting();
 void loop() {
@@ -344,8 +325,6 @@ void loop() {
 
   }
 
-
-  //GameOver = false;
   if (choice  == "snake") {
     snake_loop();
   }
@@ -362,5 +341,4 @@ void loop() {
       bright_setting();
     }
   }
-
 }
