@@ -26,8 +26,8 @@ int BRIGHTNESS = 50;
 #define last_tetris_score_adress 512
 
 // Params for width and height
-const uint8_t kMatrixWidth = 30;
-const uint8_t kMatrixHeight = 58;
+#define kMatrixWidth (30)
+#define kMatrixHeight (58)
 
 // Param for different pixel layouts
 const bool    kMatrixSerpentineLayout = true;
@@ -161,17 +161,17 @@ void clearScreen() {
 }
 
 char * dummy_sprite[] = {
-  "5 5 5 1",
-  ". c #660000",
-  "b c #56f9ff",
-  "# c #92f4df",
-  "a c #67efbf",
-  "c c #15e781",
-  ".....",
-  ".....",
-  "..#..",
-  ".aba.",
-  "ca#ac"
+  (char*)"5 5 5 1",
+  (char*)". c #660000",
+  (char*)"b c #56f9ff",
+  (char*)"# c #92f4df",
+  (char*)"a c #67efbf",
+  (char*)"c c #15e781",
+  (char*)".....",
+  (char*)".....",
+  (char*)"..#..",
+  (char*)".aba.",
+  (char*)"ca#ac"
 };
 
 // example usage: draw_xpm(dummy_sprite, 10, 10);
@@ -224,7 +224,7 @@ uint8_t readHighScore() {
     Serial.println(memHighScore_snake);
     return memHighScore_snake;
   }
-  else if (choice  = "tetris") {
+  else if (choice  == "tetris") {
     return memHighScore_tetris;
   }
 

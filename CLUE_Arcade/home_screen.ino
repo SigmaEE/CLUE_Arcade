@@ -191,7 +191,7 @@ void arrow_right_sign(int arrow_start_pos_col, int arrow_start_pos_row, int scro
   }
 }
 
-void select_line(int line_start_pos_col, int line_length, int line_start_pos_row, int scroll_move_home = 0) {
+void select_line(int line_start_pos_col, int line_length, int line_start_pos_row, int scroll_move_home) {
   for (int col = 0; col < (line_length); col++) {
     leds[XY(line_start_pos_col - col, line_start_pos_row + scroll_move_home)] = CRGB::White;
   }

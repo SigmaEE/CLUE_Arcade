@@ -25,7 +25,7 @@ int try_move_piece(struct piece * p, int dy, int dx);
 struct piece active_piece;
 
 #define PTYPES 7
-char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4] = {
+char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4 + 1] = {
   { " #       #      ",
     " #  #### #  ####",
     " #       #      ",
@@ -71,14 +71,14 @@ char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4] = {
 
 // used by console rendering
 char * field_colors[PTYPES + 1] = {
-  "\e[0;30m",
-  "\e[0;31m",
-  "\e[0;32m",
-  "\e[0;33m",
-  "\e[0;34m",
-  "\e[0;35m",
-  "\e[0;36m",
-  "\e[1;37m",
+  (char *)"\e[0;30m",
+  (char *)"\e[0;31m",
+  (char *)"\e[0;32m",
+  (char *)"\e[0;33m",
+  (char *)"\e[0;34m",
+  (char *)"\e[0;35m",
+  (char *)"\e[0;36m",
+  (char *)"\e[1;37m",
 };
 
 void get_shape(struct piece * p, int type, int rotation)
