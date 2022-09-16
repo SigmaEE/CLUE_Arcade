@@ -163,33 +163,35 @@ void draw_leds(void)
 	XImage *im = get_im(psize);
 	int y = 0;
 	int count = 0;
-	for (y = 0; y < 60; ++y) {
+	for (y = 0; y < 58; ++y) {
 		for (int x = 0; x < 30; ++x) {
 			int tx = (y & 1) ? x+1 : 30 - x;
 			if (fastled_leds[y * 30 + tx] != 0) {
 				count++;
-				put_pixel(im,  psize, x, y, fastled_leds[y*30+tx]);
+				put_pixel(im,  psize, x, y + 2, fastled_leds[y*30+tx]);
 			}
 		}
 	}
 	clock_gettime(CLOCK_REALTIME, &after);
 	int delta = 0;
 	delta = (after.tv_nsec - before.tv_nsec);
-	printf("time per pixel %d\n", delta / count);
+	//printf("time per pixel %d\n", delta / count);
 }
 
 int joystickX = 0;
 int joystickY = 0;
 
+void setup(void);
+void loop(void);
 void * emu_thread(void * arg)
 {
 	int i = 0;
-	struct timespec delay = { 0, 1000 * 1000 * 9 };
+	struct timespec delay = { 0, 1000 * 1000 * 5 };
 	struct timespec left;
-	_Z5setupv();
+	setup();
 	while (1) {
 		//printf("loop %d\n", i++);
-		_Z4loopv(); // arduino loop
+		loop(); // arduino loop
 		//sched_yield(); //(10000);
 		nanosleep(&delay, &left);
 	}
@@ -229,10 +231,10 @@ void * draw_thread(void * arg)
 					int color = base * 10 + h * 40.0;
 					color = plasma_grad((base + h) / 8);
 					put_pixel(im, psize, x, y, color);
-					draw_leds();
 				}
 			}
 
+			draw_leds();
 			XPutImage(display, win, DefaultGC(display,screen_num), im, 0, 0, 0, 0, w, h);
 
 			sem_post(&draw_done_sem);
@@ -240,8 +242,11 @@ void * draw_thread(void * arg)
 	}
 }
 
-int img()
+int main(int argc, char *argv[])
 {
+	//draw();
+
+	XInitThreads();
 	display = XOpenDisplay(NULL);
 	screen_num = DefaultScreen(display);
 	visual = DefaultVisual(display, screen_num);
@@ -277,7 +282,7 @@ int img()
 	clock_gettime(CLOCK_REALTIME, &start_time);
 	clock_gettime(CLOCK_REALTIME, &draw_time);
 	XEvent event;
-	_Z5setupv();
+	//_Z5setupv();
 	while(1)
 	{
 
@@ -388,12 +393,4 @@ int img()
 
 	XCloseDisplay(display);
 	return 0;
-
-}
-
-int main(int argc, char *argv[])
-{
-	//draw();
-
-	img();
 }

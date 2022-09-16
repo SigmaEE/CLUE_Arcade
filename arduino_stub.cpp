@@ -15,7 +15,10 @@ extern sem_t draw_done_sem;
 extern sem_t start_draw_sem;
 extern int draw_counter;
 
-//#define POSIX_BUILD 1
+// make these callable from pure C
+extern "C" void setup(void);
+extern "C" void loop(void);
+
 // arduino compatibility stuff
 #define true 1
 #define false 0
@@ -246,12 +249,6 @@ struct serial {
 	void println(const std::string s) {
 		printf("%s\n", s.c_str());
 	}
-	/*void println(std::string s) {
-		printf("%s\n", s.c_str());
-	}*/
-	/*void println(char * s) {
-		printf("%s\n", s);
-	}*/
 	void println(int i) {
 		printf("%d\n", i);
 	}
@@ -281,19 +278,10 @@ struct {
 
 void delay(int d)
 {
-	//printf("delay %d\n", d);
 	struct timespec delay = { 0, 1000 * 1000 * d };
 	struct timespec left;
-	//usleep(d * 1000);
 	nanosleep(&delay, &left);
 }
-
-//extern int speed_delay;
-//extern int score;
-//int GameOver = 0;
-//int GameOver_tetris = 0;
-//int highScore = 0;
-//int highScore_tetris = 0;
 
 /*
 int check_input()
@@ -343,27 +331,6 @@ int millis(void)
 	return time_delta(&start_time, &time);
 }
 
-/*
-  void test_game(void)
-  {
-  for (int i = 0; i < 1; ++i) {
-    try_move_piece(&active_piece, 0, (random() % 3) - 1);
-    rotate_piece(&active_piece, (random() % 3) - 1);
-    if (0 == try_move_piece(&active_piece, 1, 0)) {
-      stick_piece(&active_piece);
-      new_piece(&active_piece);
-      if (0 == try_move_piece(&active_piece, 0, 0)) {
-        // game over!
-        printf("Game over after %d moves\n", i);
-        break;
-      }
-    }
-    render();
-    usleep(100000);
-  }
-  }
-*/
-
 extern int joystickX;
 extern int joystickY;
 int analogRead(int pin)
@@ -400,7 +367,9 @@ int random(int l, int h)
 }
 
 typedef std::string String;
+
 void setting_screen(void);
+
 #include "CLUE_Arcade/CLUE_Arcade.ino"
 #include "CLUE_Arcade/Letters_and_signs.ino"
 #include "CLUE_Arcade/Setting_screen.ino"
