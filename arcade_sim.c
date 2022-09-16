@@ -156,26 +156,15 @@ long plasma_grad(double c)
 extern int fastled_leds[60 * 30];
 void draw_leds(void)
 {
-	struct timespec before;
-	struct timespec after;
-	clock_gettime(CLOCK_REALTIME, &before);
 	int psize = get_psize();
 	XImage *im = get_im(psize);
 	int y = 0;
-	int count = 0;
 	for (y = 0; y < 58; ++y) {
 		for (int x = 0; x < 30; ++x) {
 			int tx = (y & 1) ? x+1 : 30 - x;
-			if (fastled_leds[y * 30 + tx] != 0) {
-				count++;
-				put_pixel(im,  psize, x, y + 2, fastled_leds[y*30+tx]);
-			}
+			put_pixel(im,  psize, x, y + 2, fastled_leds[y*30+tx]);
 		}
 	}
-	clock_gettime(CLOCK_REALTIME, &after);
-	int delta = 0;
-	delta = (after.tv_nsec - before.tv_nsec);
-	//printf("time per pixel %d\n", delta / count);
 }
 
 int joystickX = 0;
@@ -190,9 +179,7 @@ void * emu_thread(void * arg)
 	struct timespec left;
 	setup();
 	while (1) {
-		//printf("loop %d\n", i++);
 		loop(); // arduino loop
-		//sched_yield(); //(10000);
 		nanosleep(&delay, &left);
 	}
 }
@@ -200,8 +187,7 @@ void * emu_thread(void * arg)
 void * draw_thread(void * arg)
 {
 	static int last_draw = 0;
-	while(1)
-	{
+	while(1) {
 		//XNextEvent(display,&event);
 		//if (millis_since(&draw_time) > 20) {
 		sem_wait(&start_draw_sem);
@@ -213,26 +199,6 @@ void * draw_thread(void * arg)
 			int w = psize * 30;
 			int h = psize * 60;
 			XImage *im = get_im(psize);
-			for (int x = 0; x < 30; x++) {
-				for (int y = 0; y < 60; y++) {
-					double dx = 15.0 - x;
-					double dy = 30.0 - y;
-					dx = 15 - x * cos(ofs * 0.03) * 0.2;
-					dy = 15 - y * sin(ofs * 0.04) * 0.2;
-					double d = sqrt(dx*dx + dy*dy);
-					double base = 2 * (1.0 + sin(d * 0.2 - (double)ofs * 0.01));
-
-					dx = 15 - x * cos(ofs * 0.02);
-					dy = 15 - y * sin(ofs * 0.01);
-					double d1 = sqrt(0.8 * dx * dx + 1.3 * dy * dy) * 0.2;
-					double d2 = sqrt(1.35 * dx * dx + 0.45 * dy  * dy) * 0.2;
-
-					double h = 1.0 + sin(d1 + ofs * 0.1) + 1.0 + sin(d2 + ofs * 0.05);
-					int color = base * 10 + h * 40.0;
-					color = plasma_grad((base + h) / 8);
-					put_pixel(im, psize, x, y, color);
-				}
-			}
 
 			draw_leds();
 			XPutImage(display, win, DefaultGC(display,screen_num), im, 0, 0, 0, 0, w, h);
@@ -262,9 +228,9 @@ int main(int argc, char *argv[])
 	XStringListToTextProperty(s, 2, &xtp);
 	XSetWMName(display, win, &xtp);
 
-	data = (char*)malloc(900*450*4); // alloc for max size XXX could realloc in get_im instead
+	data = (char*)malloc(900 * 450 * 4); // alloc for max size XXX could realloc in get_im instead
 
-	XSelectInput(display,win,ExposureMask | ButtonPressMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask);
+	XSelectInput(display, win, ExposureMask | ButtonPressMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask);
 
 	XMapWindow(display,win);
 
@@ -282,10 +248,7 @@ int main(int argc, char *argv[])
 	clock_gettime(CLOCK_REALTIME, &start_time);
 	clock_gettime(CLOCK_REALTIME, &draw_time);
 	XEvent event;
-	//_Z5setupv();
-	while(1)
-	{
-
+	while(1) {
 		int got_event = 1;
 		while (1 == got_event) {
 			/*

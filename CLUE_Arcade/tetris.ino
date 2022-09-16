@@ -126,7 +126,6 @@ void print_piece(struct piece * p)
 
 void render(void)
 {
-  clearScreen();
   //printf("\e[2J");
   for (int y = 0; y < ROWS; ++y) {
     // printf("\e[0m%-3d |", y);
@@ -155,15 +154,17 @@ void render(void)
         case 8: color = CRGB::Grey; break;
       }
 
-      leds[XY(29 - x * 3, y * 3)] = color;
-      leds[XY(29 - x * 3, y * 3 - 1)] = color;
-      leds[XY(29 - x * 3, y * 3 - 2)] = color;
-      leds[XY(28 - x * 3, y * 3)] = color;
-      leds[XY(28 - x * 3, y * 3 - 1)] = color;
-      leds[XY(28 - x * 3, y * 3 - 2)] = color;
-      leds[XY(27 - x * 3, y * 3)] = color;
-      leds[XY(27 - x * 3, y * 3 - 1)] = color;
-      leds[XY(27 - x * 3, y * 3 - 2)] = color;
+      if (field_val != 0) {
+        leds[XY(29 - x * 3, y * 3)] = color;
+        leds[XY(29 - x * 3, y * 3 - 1)] = color;
+        leds[XY(29 - x * 3, y * 3 - 2)] = color;
+        leds[XY(28 - x * 3, y * 3)] = color;
+        leds[XY(28 - x * 3, y * 3 - 1)] = color;
+        leds[XY(28 - x * 3, y * 3 - 2)] = color;
+        leds[XY(27 - x * 3, y * 3)] = color;
+        leds[XY(27 - x * 3, y * 3 - 1)] = color;
+        leds[XY(27 - x * 3, y * 3 - 2)] = color;
+      }
 #endif
 
 #ifdef POSIX_BUILD
@@ -197,7 +198,10 @@ void render(void)
     i++;
     tmp = tmp >> 1;
   }
+  int time = millis();
   FastLED.show();
+  Serial.print("FastLED.show() time: ");
+  Serial.println(millis() - time);
 #endif
 
 #ifdef POSIX_BUILD
