@@ -120,18 +120,23 @@ void setting_selection() {
 
 void bright_setting() {
   Serial.print("Bright setting");
-  while (action == ACT_NONE || action == ACT_U || action == ACT_D) { //home screen stays until up or down input on joystick
+  while (action == ACT_NONE || action == ACT_R || action == ACT_L) { //home screen stays until up or down input on joystick
     action = check_input();
+    if (action & ACT_R){
+      BRIGHTNESS += 10;
+      Serial.print("brightness +");
+      Serial.print(BRIGHTNESS);
+    }
+    else if (action & ACT_L){
+      BRIGHTNESS -= 10;
+      Serial.print("brightness -");
+      Serial.print(BRIGHTNESS);
+    }
+    else if(action & ACT_U || action &  ACT_D){
+      GameOver = true;
+      break;
+    }
     delay(1);
   }
-
-  if (action & ACT_R){
-    BRIGHTNESS += 10;
-    Serial.print("brightness +");
-    Serial.print(BRIGHTNESS);
-  } else if (action & ACT_L){
-    BRIGHTNESS -= 10;
-    Serial.print("brightness -");
-    Serial.print(BRIGHTNESS);
-  }
+  GameOver = true;
 }
