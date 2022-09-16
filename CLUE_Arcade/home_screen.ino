@@ -183,10 +183,59 @@ void select_line(int line_start_pos_col, int line_length, int line_start_pos_row
 
 void game_selection();
 
+#define RANGE(from, to) ( (c >= from && c < to) * (c - from) )
+long plasma_grad(double c)
+{
+	int r, g, b;
+
+	b = 55 + RANGE(0.0, 1.0) * 200;
+	r = RANGE(0.4, 1.0) * 200;
+	g = RANGE(0.8, 1.0) * 255;
+
+	b = b * 0.5;
+	r = r * 0.5;
+	g = g * 0.5;
+	//r = (c > 0.4 && c < 0.43) * ((c - 0.4) / 0.03) * 255;
+	//g = (c > 0.6 && c < 0.63) * 255;
+	//b = (c > 0.8 && c < 0.83) * 255;
+	//b = g = 0;
+	return b + (g << 8) + (r << 16);
+}
+
+void draw_plasma()
+{
+	int ofs = millis();
+	for (int x = 0; x < 30; x++) {
+		for (int y = 0; y < 60; y++) {
+			double dx = 15.0 - x;
+			double dy = 30.0 - y;
+			dx = 15 - x * cos(ofs * 0.03) * 0.2;
+			dy = 15 - y * sin(ofs * 0.04) * 0.2;
+			double d = sqrt(dx*dx + dy*dy);
+			double base = 2 * (1.0 + sin(d * 0.2 - (double)ofs * 0.01));
+
+			dx = 15 - x * cos(ofs * 0.02);
+			dy = 15 - y * sin(ofs * 0.01);
+			double d1 = sqrt(0.8 * dx * dx + 1.3 * dy * dy) * 0.2;
+			double d2 = sqrt(1.35 * dx * dx + 0.45 * dy  * dy) * 0.2;
+
+			double h = 1.0 + sin(d1 + ofs * 0.1) + 1.0 + sin(d2 + ofs * 0.05);
+			int color = base * 10 + h * 40.0;
+			color = plasma_grad((base + h) / 8);
+			leds[XY(x, y)] = color;
+			//put_pixel(im, psize, x, y, color);
+		}
+	}
+}
+
 void home_screen()
 {
   GameOver = true;
   choice  = "";
+
+  // background effect
+  draw_plasma();
+
   clue_word(clue_start_pos_col, clue_start_pos_row);
   arcade_word(arcade_start_pos_col, arcade_start_pos_row);
   select_line(line1_start_pos_col, line1_length, line1_start_pos_row, scroll_move_home);
@@ -199,6 +248,7 @@ void home_screen()
 
   FastLED.show();
 }
+
 void game_selection() {
   int action = check_input();
   if (selection == false) {

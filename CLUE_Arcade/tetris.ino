@@ -293,6 +293,7 @@ void tetris_setup()
   GameOver_tetris = false;
 }
 
+void draw_plasma();
 
 void tetris_loop() {
   long int current_time;
@@ -322,7 +323,7 @@ void tetris_loop() {
   }
 
   if (action == ACT_NONE) {
-    return;
+    //return;
   }
   if (action & ACT_L) {
     try_move_piece(&active_piece, 0, -1);
@@ -349,6 +350,7 @@ void tetris_loop() {
     last_tick = millis();
   }
   if (!GameOver) {
+    draw_plasma();
     render();
   }
 }
