@@ -117,12 +117,12 @@ int check_input()
   current_time = millis();
 
   if ( xPotVal < 400) {
-    if (current_time - last_left > 200) {
+    if (current_time - last_left > 100) {
       action |= ACT_L;
       last_left = millis();
     }
   } else if (xPotVal > 600) {
-    if (current_time - last_right > 200) {
+    if (current_time - last_right > 100) {
       action |= ACT_R;
       last_right = millis();
     }
@@ -134,7 +134,7 @@ int check_input()
     }
   } else if (yPotVal > 600) {
 
-    if (current_time - last_rot > 300) {
+    if (current_time - last_rot > 200) {
       action |= ACT_U;
       last_rot = millis();
     }

@@ -26,6 +26,7 @@ long int last_tick;
 int try_move_piece(struct piece * p, int dy, int dx);
 
 struct piece active_piece;
+struct piece next_piece;
 
 #define PTYPES 7
 char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4 + 1] = {
@@ -35,8 +36,8 @@ char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4 + 1] = {
     " #       #      "
   },
 
-  { "##  ##  ##  ##  ",
-    "##  ##  ##  ##  ",
+  { " ##  ##  ##  ## ",
+    " ##  ##  ##  ## ",
     "                ",
     "                "
   },
@@ -111,13 +112,16 @@ void rotate_piece(struct piece * p, int steps)
   }
 }
 
-void new_piece(struct piece * p)
+void new_piece(struct piece * new_p)
 {
-  p->origin_x = 3;
-  p->origin_y = 0;
-  p->rotation = 0;
-  p->type = random() % PTYPES;
-  get_shape(p, p->type, p->rotation);
+  struct piece p;
+  p.origin_x = 3;
+  p.origin_y = 0;
+  p.rotation = 0;
+  p.type = random() % PTYPES;
+  get_shape(&p, p.type, p.rotation);
+  *new_p = next_piece;
+  next_piece = p;
 }
 
 void print_piece(struct piece * p)
@@ -220,6 +224,30 @@ void render(void)
 
   draw_color_xpm(green, numbers[(tmp_combo - 1) % 10], 3, 53);
 
+  // draw next piece
+  for (int y = 0; y < PHEIGHT; ++y) {
+    for (int x = 0; x < PWIDTH; ++x) {
+      int field_val = next_piece.squares[y][x];
+      if (next_piece.squares[y][x] != 0) {
+        CRGB color;
+        switch (field_val) {
+          case 0: color = CRGB::Black; break;
+          case 1: color = CRGB::Red; break;
+          case 2: color = CRGB::Blue; break;
+          case 3: color = CRGB::Yellow; break;
+          case 4: color = CRGB::Purple; break;
+          case 5: color = CRGB::ForestGreen; break;
+          case 6: color = CRGB::Green; break;
+          case 7: color = CRGB::Brown; break;
+          case 8: color = CRGB::Grey; break;
+        }
+        leds[XY(27 - x * 2, 1 + y * 2)]     = color;
+        leds[XY(27 - x * 2, 1 + y * 2 + 1)] = color;
+        leds[XY(26 - x * 2, 1 + y * 2)]     = color;
+        leds[XY(26 - x * 2, 1 + y * 2 + 1)] = color;
+      }
+    }
+  }
   FastLED.show();
 #endif
 
@@ -329,6 +357,7 @@ void tetris_setup()
   level = 0;
   speed_delay = 1000;
   last_tick = millis();
+  new_piece(&active_piece);
   new_piece(&active_piece);
   render();
   GameOver = false;

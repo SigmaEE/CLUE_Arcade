@@ -104,11 +104,15 @@ void bright_setting() {
       BRIGHTNESS += 10;
       Serial.print("brightness +");
       Serial.print(BRIGHTNESS);
+      FastLED.setBrightness( BRIGHTNESS );
+      FastLED.show();
     }
     else if (action & ACT_L){
       BRIGHTNESS -= 10;
       Serial.print("brightness -");
       Serial.print(BRIGHTNESS);
+      FastLED.setBrightness( BRIGHTNESS );
+      FastLED.show();
     }
     else if(action & ACT_U || action &  ACT_D){
       GameOver = true;
