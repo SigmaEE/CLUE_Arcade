@@ -181,9 +181,39 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
 
         }
       }
-      leds[XY(xofs + x, yofs + y)].r = r;
-      leds[XY(xofs + x, yofs + y)].g = g;
-      leds[XY(xofs + x, yofs + y)].b = b;
+      leds[XY(xofs - x, yofs + y)].r = r;
+      leds[XY(xofs - x, yofs + y)].g = g;
+      leds[XY(xofs - x, yofs + y)].b = b;
+    }
+  }
+}
+//orange ff7300
+//dark green 0caf00
+void draw_color_xpm(int color, char * xpm[], int xofs, int yofs)
+{
+  int w, h, n_colors, depth;
+  char dummy;
+  sscanf(xpm[0], "%d %d %d %d", &w, &h, &n_colors, &depth);
+
+  for (int y = 0; y < h; y++) {
+    for (int x = 0; x < w; x++) {
+      // loop through and parse colors
+      int r, g, b;
+      for (char ** col_str = &xpm[1]; col_str <= &xpm[n_colors]; col_str++) {
+        if (**col_str == xpm[n_colors + 1 + y][x]) { // match! grab color value
+          sscanf(*col_str, "%*c %*c #%02x%02x%02x", &r, &g, &b);
+
+        }
+      }
+      if (r != 0x00 && g != 0x00 && b != 0x00) leds[XY(xofs - x, yofs + y)] = color;
+      else {
+        leds[XY(xofs - x, yofs + y)].r = r;
+        leds[XY(xofs - x, yofs + y)].g = g;
+        leds[XY(xofs - x, yofs + y)].b = b;   
+      }  
+      //sscanf(*color, "%*c %*c #%02x%02x%02x", &r, &g, &b);     
+      //leds[XY(xofs - x, yofs + y)] = color;
+    
     }
   }
 }

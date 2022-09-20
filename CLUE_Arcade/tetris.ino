@@ -16,6 +16,9 @@ struct piece {
   int type;
   int squares[PHEIGHT][PWIDTH];
 };
+int combo = 1;
+int lines_cleared = 0;
+int level = 0;
 
 long int last_tick;
 
@@ -175,28 +178,34 @@ void render(void)
 #endif
   }
 #ifndef POSIX_BUILD
-  unsigned int tmp = score;
+  unsigned int tmp_score = score;
+  unsigned int tmp_hs = highScore_tetris;
+  unsigned int tmp_level = level;
+  unsigned int tmp_combo = combo;
   int i = 0;
-  while (tmp > 0) {
-    if (tmp & 1) {
-      leds[XY(0, i)] = CRGB::Blue;
-    } else {
-      leds[XY(0, i)] = CRGB::Red;
-    }
-    i++;
-    tmp = tmp >> 1;
-  }
-  tmp = highScore_tetris;
-  i = 0;
-  while (tmp > 0) {
-    if (tmp & 1) {
-      leds[XY(29, i)] = CRGB::Blue;
-    } else {
-      leds[XY(29, i)] = CRGB::Red;
-    }
-    i++;
-    tmp = tmp >> 1;
-  }
+  //orange ff7300
+//dark green 0caf00
+  int green = 0x0caf00;
+  int orange = 0xff7300;
+  draw_color_xpm(green, numbers[tmp_score % 10],3,0);
+  draw_color_xpm(green, numbers[(tmp_score/10) % 10],7,0);
+  draw_color_xpm(green, numbers[(tmp_score/100) % 10],11,0);
+  draw_color_xpm(green, numbers[(tmp_score/1000) % 10],15,0);
+  draw_color_xpm(green, numbers[(tmp_score/10000) % 10],19,0);
+
+
+
+  draw_color_xpm(orange, numbers[tmp_hs % 10],3,6);
+  draw_color_xpm(orange, numbers[(tmp_hs/10) % 10],7,6);
+  draw_color_xpm(orange, numbers[(tmp_hs/100) % 10],11,6);
+  draw_color_xpm(orange, numbers[(tmp_hs/1000) % 10],15,6);
+  draw_color_xpm(orange, numbers[(tmp_hs/10000) % 10],19,6);
+
+  draw_color_xpm(orange, numbers[tmp_level % 10], 29, 53);
+  draw_color_xpm(orange, numbers[(tmp_level/10) % 10], 29, 47);
+
+  draw_color_xpm(green, numbers[tmp_combo % 10], 3, 53);
+
   FastLED.show();
 #endif
 
@@ -220,6 +229,7 @@ void stick_piece(struct piece * p)
 
 void remove_filled_rows()
 {
+  int temp_score = 0;
   for (int row = 0; row < ROWS; ++row) {
     int filled = 1;
     for (int x = 0; x < COLUMNS; ++x) {
@@ -228,12 +238,12 @@ void remove_filled_rows()
       }
     }
     if (filled) {
-      ++score;
-      //++count;
-      if (score % 3 == 0)
-      {
+      ++temp_score;
+      ++lines_cleared;
+      if (lines_cleared % 3 == 0){
         if (speed_delay > 100)
         {
+          level++;
           speed_delay *= 0.85;
         }
       }
@@ -245,6 +255,22 @@ void remove_filled_rows()
       }
     }
   }
+
+  //40 * (n + 1)  100 * (n + 1) 300 * (n + 1) 1200 * (n + 1)
+  
+  if (temp_score == 1) score += 1*(level+1)*combo; 
+  else if (temp_score == 2) score += 2*(level+1)*combo; 
+  else if (temp_score == 3) score += 7*(level+1)*combo; 
+  else if (temp_score == 3) score += 30*(level+1)*combo;
+  
+  //score += temp_score; 
+
+  //score += temp_score*combo;
+  
+  if (temp_score >= 1){
+    ++combo;
+  }
+  else combo = 1;
 }
 
 int try_move_piece(struct piece * p, int dy, int dx)
@@ -285,6 +311,8 @@ void tetris_setup()
     }
   }
   score = 0;
+  combo = 0;
+  level = 0;
   speed_delay = 1000;
   last_tick = millis();
   new_piece(&active_piece);
@@ -340,6 +368,7 @@ void tetris_loop() {
   if (action & ACT_D) {
     if (!try_move_piece(&active_piece, 1, 0)) {
       stick_piece(&active_piece);
+      Serial.print("HERE''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''!");
       remove_filled_rows();
       new_piece(&active_piece);
       if (0 == try_move_piece(&active_piece, 0, 0)) {
