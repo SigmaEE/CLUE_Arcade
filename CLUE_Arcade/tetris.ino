@@ -158,15 +158,29 @@ void render(void)
         case 8: color = CRGB::Grey; break;
       }
 
-      leds[XY(29 - x * 3, y * 3)] = color;
-      leds[XY(29 - x * 3, y * 3 - 1)] = color;
-      leds[XY(29 - x * 3, y * 3 - 2)] = color;
-      leds[XY(28 - x * 3, y * 3)] = color;
-      leds[XY(28 - x * 3, y * 3 - 1)] = color;
-      leds[XY(28 - x * 3, y * 3 - 2)] = color;
-      leds[XY(27 - x * 3, y * 3)] = color;
-      leds[XY(27 - x * 3, y * 3 - 1)] = color;
-      leds[XY(27 - x * 3, y * 3 - 2)] = color;
+      for (int y = 18; y < 60; y++) {
+        leds[XY(4, y)] = 0x080808;
+        leds[XY(25, y)] = 0x080808;
+      }
+      for (int x = 4; x < 26; x++) {
+        leds[XY(x, 17)] = 0x080808;
+      }
+      leds[XY(24 - x * 2, 19 + y * 2)] = color;
+      leds[XY(24 - x * 2, 19 + y * 2 - 1)] = color;
+      leds[XY(23 - x * 2, 19 + y * 2)] = color;
+      leds[XY(23 - x * 2, 19 + y * 2 - 1)] = color;
+
+      if (0) {
+        leds[XY(29 - x * 3, y * 3)] = color;
+        leds[XY(29 - x * 3, y * 3 - 1)] = color;
+        leds[XY(29 - x * 3, y * 3 - 2)] = color;
+        leds[XY(28 - x * 3, y * 3)] = color;
+        leds[XY(28 - x * 3, y * 3 - 1)] = color;
+        leds[XY(28 - x * 3, y * 3 - 2)] = color;
+        leds[XY(27 - x * 3, y * 3)] = color;
+        leds[XY(27 - x * 3, y * 3 - 1)] = color;
+        leds[XY(27 - x * 3, y * 3 - 2)] = color;
+      }
 #endif
 
 #ifdef POSIX_BUILD
@@ -379,7 +393,7 @@ void tetris_loop() {
     last_tick = millis();
   }
   if (!GameOver) {
-    draw_plasma();
+    //draw_plasma();
     render();
   }
 }

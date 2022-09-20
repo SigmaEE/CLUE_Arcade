@@ -196,7 +196,6 @@ struct FastLED {
 		int t = millis();
 		sem_post(&start_draw_sem);
 		sem_wait(&draw_done_sem);
-		printf("time %d\n", millis() - t);
 	}
 	void setBrightness( int i ) {
 		printf("FastLED.setBrightness\n");

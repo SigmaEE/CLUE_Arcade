@@ -42,106 +42,25 @@ int arrow_up_start_pos_row = arrow_down_start_pos_row - (Letter_size_row - 1) - 
 int arrow_right_start_pos_col = snake_start_pos_col - snake_length * (Letter_size_col + 1);
 int arrow_right_start_pos_row = snake_start_pos_row;
 
-void clue_word(int clue_start_pos_col, int clue_start_pos_row) {
-  for (int current_letter = 0; current_letter < clue_length; current_letter++) { //itterating through each letter in the word we want to write.
-    switch (current_letter) {
-      case 0: memcpy(letter, C_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 1: memcpy(letter, L_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 2: memcpy(letter, U_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 3: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-    }
-
-    for (int col = 0; col < Letter_size_col; col++) {
-      for (int row = 0; row < Letter_size_row; row++) {
-        if (letter[row][col] == 1) {
-          leds[XY(clue_start_pos_col - (Letter_size_col + 1) * current_letter - col, clue_start_pos_row + row)] = CRGB::Blue;
-        }
+void draw_letter(int x, int y, char let, CRGB::HTMLColorCode color)
+{
+  int letter[Letter_size_row][Letter_size_col];
+  memcpy(letter, All_letters[let - 'A'], Letter_size_row * Letter_size_col * sizeof(int));
+  for (int col = 0; col < Letter_size_col; col++) {
+    for (int row = 0; row < Letter_size_row; row++) {
+      if (letter[row][col] == 1) {
+        leds[XY(x - col, y + row)] = color;
       }
     }
   }
 }
 
-void arcade_word(int arcade_start_pos_col, int arcade_start_pos_row) {
-  for (int current_letter = 0; current_letter < arcade_length; current_letter++) { //itterating through each letter in the word we want to write.
-    switch (current_letter) {
-      case 0: memcpy(letter, A_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 1: memcpy(letter, R_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 2: memcpy(letter, C_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 3: memcpy(letter, A_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 4: memcpy(letter, D_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 5: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-    }
-
-    for (int col = 0; col < Letter_size_col; col++) {
-      for (int row = 0; row < Letter_size_row; row++) {
-        if (letter[row][col] == 1) {
-          leds[XY(arcade_start_pos_col - (Letter_size_col + 1) * current_letter - col, arcade_start_pos_row + row)] = CRGB::Blue;
-        }
-      }
-    }
-  }
-}
-
-void tetris_word(int start_pos_row, int start_pos_col) {
-  for (int current_letter = 0; current_letter < tetris_length; current_letter++) { //itterating through each letter in the word we want to write.
-    switch (current_letter) {
-      case 0: memcpy(letter, T_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 1: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 2: memcpy(letter, T_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 3: memcpy(letter, R_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 4: memcpy(letter, I_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 5: memcpy(letter, S_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-    }
-
-    for (int col = 0; col < Letter_size_col; col++) {
-      for (int row = 0; row < Letter_size_row; row++) {
-        if (letter[row][col] == 1) {
-          leds[XY(start_pos_col - (Letter_size_col + 1) * current_letter - col, start_pos_row + row)] = CRGB::Red;
-        }
-      }
-    }
-  }
-}
-
-void seting_word(int start_pos_row, int start_pos_col) {
-  for (int current_letter = 0; current_letter < seting_length; current_letter++) { //itterating through each letter in the word we want to write.
-    switch (current_letter) {
-      case 0: memcpy(letter, S_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 1: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 2: memcpy(letter, T_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 3: memcpy(letter, I_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 4: memcpy(letter, N_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 5: memcpy(letter, G_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-    }
-
-    for (int col = 0; col < Letter_size_col; col++) {
-      for (int row = 0; row < Letter_size_row; row++) {
-        if (letter[row][col] == 1) {
-          leds[XY(start_pos_col - (Letter_size_col + 1) * current_letter - col, start_pos_row + row)] = CRGB::Green;
-        }
-      }
-    }
-  }
-}
-
-void snake_word(int snake_start_pos_col, int snake_start_pos_row) {
-  for (int current_letter = 0; current_letter < snake_length; current_letter++) { //itterating through each letter in the word we want to write.
-
-    switch (current_letter) {
-      case 0: memcpy(letter, S_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 1: memcpy(letter, N_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 2: memcpy(letter, A_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 3: memcpy(letter, K_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-      case 4: memcpy(letter, E_letter, Letter_size_row * Letter_size_col * sizeof(int)); break;
-    }
-
-    for (int col = 0; col < Letter_size_col; col++) {
-      for (int row = 0; row < Letter_size_row; row++) {
-        if (letter[row][col] == 1) {
-          leds[XY(snake_start_pos_col - (Letter_size_col + 1) * current_letter - col, snake_start_pos_row + row)] = CRGB::Yellow;
-        }
-      }
-    }
+void draw_word(int x, int y, char * str, CRGB::HTMLColorCode color)
+{
+  int i = 0;
+  while ((str[i]) != '\0') {
+    draw_letter(x - Letter_size_row * i, y, str[i], color);
+    i++;
   }
 }
 
@@ -205,6 +124,7 @@ long plasma_grad(double c)
 void draw_plasma()
 {
 	int ofs = millis();
+	ofs = ofs * 0.06;
 	for (int x = 0; x < 30; x++) {
 		for (int y = 0; y < 60; y++) {
 			double dx = 15.0 - x;
@@ -233,16 +153,13 @@ void home_screen()
   GameOver = true;
   choice  = "";
 
-  // background effect
-  draw_plasma();
-
-  clue_word(clue_start_pos_col, clue_start_pos_row);
-  arcade_word(arcade_start_pos_col, arcade_start_pos_row);
+  draw_word(clue_start_pos_col, clue_start_pos_row, (char*)"CLUE", CRGB::Blue);
+  draw_word(arcade_start_pos_col, arcade_start_pos_row, (char*)"ARCADE", CRGB::Blue);
   select_line(line1_start_pos_col, line1_length, line1_start_pos_row, scroll_move_home);
-  snake_word(snake_start_pos_col, snake_start_pos_row);
+  draw_word(snake_start_pos_col, snake_start_pos_row, (char*)"SNAKE", CRGB::Yellow);
   select_line(line2_start_pos_col, line2_length, line2_start_pos_row, scroll_move_home);
-  tetris_word(tetris_start_pos_row, tetris_start_pos_col);
-  seting_word(seting_home_start_pos_row, seting_home_start_pos_col);
+  draw_word(tetris_start_pos_col, tetris_start_pos_row, (char*)"TETRIS", CRGB::Red);
+  draw_word(seting_home_start_pos_col, seting_home_start_pos_row, (char*)"SETING", CRGB::Green);
   arrow_up_sign(arrow_up_start_pos_col, arrow_up_start_pos_row);
   arrow_down_sign(arrow_down_start_pos_col, arrow_down_start_pos_row);
 
