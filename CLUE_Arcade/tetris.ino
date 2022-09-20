@@ -237,6 +237,9 @@ void stick_piece(struct piece * p)
 
 void remove_filled_rows()
 {
+  static int combo = 1;
+  static int lines_cleared = 0;
+  int temp_score = 0;
   for (int row = 0; row < ROWS; ++row) {
     int filled = 1;
     for (int x = 0; x < COLUMNS; ++x) {
@@ -245,15 +248,14 @@ void remove_filled_rows()
       }
     }
     if (filled) {
-      ++score;
-      //++count;
-      if (score % 3 == 0)
+      ++temp_score;
+      ++lines_cleared;
+      if (lines_cleared % 3 == 0){
+      if (speed_delay > 100)
       {
-        if (speed_delay > 100)
-        {
-          speed_delay *= 0.85;
-        }
+        speed_delay *= 0.85;
       }
+    }
       for (int move_row = row; move_row > 0; --move_row) {
         //memcpy(&field[move_row][0], &field[move_row - 1][0], 10);
         for (int move_col = 0; move_col < COLUMNS; ++move_col) {
@@ -262,6 +264,13 @@ void remove_filled_rows()
       }
     }
   }
+
+  score += temp_score*combo;
+
+  if (temp_score >= 1){
+    ++combo;
+  }
+  else combo = 1;
 }
 
 int try_move_piece(struct piece * p, int dy, int dx)
@@ -318,7 +327,7 @@ void tetris_loop() {
     if (score > highScore_tetris) {
       Serial.print("highscore!");
       highScore_tetris = score;
-      writeHighScore();
+      writeHighScore("tetris");
       Serial.print("highscore written''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''!");
       hsAnimation();
       Serial.print("animation");
@@ -329,6 +338,7 @@ void tetris_loop() {
     last_tick = millis();
     new_piece(&active_piece);
     render();
+    switch_screen(&home_screen);
     return;
   }
   int action = check_input();

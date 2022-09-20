@@ -186,16 +186,21 @@ int fastled_leds[600 * 30];
 CLEDController c;
 struct FastLED {
 	void show(void) {
+		struct timespec before;
+		clock_gettime(CLOCK_REALTIME, &before);
+
 		//printf("FastLED.show()\n");
 		for (int i = 0; i < (60 * 30); i++) {
-			fastled_leds[i] = leds_plus_safety_pixel[i].b;
-			fastled_leds[i] += leds_plus_safety_pixel[i].g << 8;
-			fastled_leds[i] += leds_plus_safety_pixel[i].r << 16;
+			int tmp = leds_plus_safety_pixel[i].b;
+			tmp += leds_plus_safety_pixel[i].g << 8;
+			tmp += leds_plus_safety_pixel[i].r << 16;
+			fastled_leds[i] = tmp;
 		}
 		draw_counter++;
-		int t = millis();
 		sem_post(&start_draw_sem);
 		sem_wait(&draw_done_sem);
+		//clock_gettime(CLOCK_REALTIME, now);
+		usleep(53 * 1000);
 	}
 	void setBrightness( int i ) {
 		printf("FastLED.setBrightness\n");

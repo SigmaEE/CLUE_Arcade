@@ -62,9 +62,9 @@ struct serial Serial1;
 
 void delay(int d)
 {
+	// XXX what if nanosleep() is interrupted?
 	struct timespec delay = { 0, 1000 * 1000 * d };
-	struct timespec left;
-	nanosleep(&delay, &left);
+	nanosleep(&delay, NULL);
 }
 
 struct timespec start_time;
@@ -79,7 +79,7 @@ int time_delta(struct timespec * t1, struct timespec * t2)
   return delta;
 }
 
-// relies on start_time being set when game starts!
+// XXX relies on start_time being set when arduino starts!
 int millis(void)
 {
 	struct timespec time;
@@ -87,8 +87,8 @@ int millis(void)
 	return time_delta(&start_time, &time);
 }
 
-extern int joystickX;
-extern int joystickY;
+extern volatile int joystickX;
+extern volatile int joystickY;
 int analogRead(int pin)
 {
 	//return 100;
@@ -123,7 +123,8 @@ int random(int l, int h)
 
 typedef std::string String;
 
-void setting_screen(void);
+void setting_screen_loop(void);
+void setting_screen_setup(void);
 
 #include "CLUE_Arcade/CLUE_Arcade.ino"
 #include "CLUE_Arcade/Letters_and_signs.ino"

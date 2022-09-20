@@ -11,8 +11,8 @@ int tailY[600];
 int nTail = 3;
 
 void inPut() {
-  xPotVal = analogRead(xPotPin);
-  yPotVal = analogRead(yPotPin);
+  int xPotVal = analogRead(xPotPin);
+  int yPotVal = analogRead(yPotPin);
 
   if ( xPotVal < 400) {
     dir = ACT_L;
@@ -185,7 +185,7 @@ void snake_loop() {
       highScore_snake = score;
       Serial.print("new highscore = ");
       Serial.println(highScore_snake);
-      writeHighScore();
+      writeHighScore("snake");
       hsAnimation();
       unsigned int tmp = highScore_snake;
       int i = 0;
@@ -200,6 +200,7 @@ void snake_loop() {
       }
     }
     deathAnimation();
+    switch_screen(&home_screen);
 
     for (int j = 0; j < kMatrixHeight; j++) {
       for ( int i = 0; i < kMatrixWidth; i++) {

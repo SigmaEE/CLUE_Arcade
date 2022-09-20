@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #define LED_PIN  3
 
+// fastled takes 53/52 milliseconds to render!
 #define COLOR_ORDER GRB
 #define CHIPSET WS2812B
 
@@ -32,8 +33,6 @@ int BRIGHTNESS = 50;
 // Param for different pixel layouts
 const bool    kMatrixSerpentineLayout = true;
 
-int xPotVal;
-int yPotVal;
 const int xPotPin = A0;
 const int yPotPin = A1;
 
@@ -49,7 +48,8 @@ bool selection;
 int x, y,  highScore_snake, highScore_tetris;
 int letter[Letter_size_row][Letter_size_col];
 String choice  = "none";
-void home_screen();
+void home_screen_loop();
+void home_screen_setup();
 void game_selection();
 int check_input();
 void snake_setup();
@@ -84,35 +84,34 @@ uint16_t XY( uint8_t x, uint8_t y)
   return 2000;
 }
 
+struct input_filter {
+  int up_initial_delay;
+  int up_repeat_delay;
+  int down_initial_delay;
+  int down_repeat_delay;
+  int left_initial_delay;
+  int left_repeat_delay;
+  int right_initial_delay;
+  int right_repeat_delay;
+};
+
+int get_filtered_input(struct input_filter * filter)
+{
+
+}
+
 int check_input()
 {
   int action = ACT_NONE;
 
-#ifdef CONSOLE_INPUT
-  long int n = 0;
-  // if n == 0 there is nothing to read
-  ioctl(STDIN_FILENO, FIONREAD, &n);
-  while (n > 0) {
-    int c = fgetc(stdin);
-    switch (c) {
-      case '1': action |= ACT_L; break;
-      case '2': action |= ACT_R; break;
-      case '3': action |= ACT_D; break;
-      case '8': action |= ACT_RN; break;
-      case '9': action |= ACT_U; break;
-      case 'q': action |= ACT_Q; break;
-    }
-    ioctl(STDIN_FILENO, FIONREAD, &n);
-  }
-#endif
-
   static long int current_time;
-  static long int last_rot = 0;
+  static long int last_up = 0;
   static long int last_down = 0;
   static long int last_left = 0;
   static long int last_right = 0;
-  xPotVal = analogRead(xPotPin);
-  yPotVal = analogRead(yPotPin);
+
+  int xPotVal = analogRead(xPotPin);
+  int yPotVal = analogRead(yPotPin);
 
   current_time = millis();
 
@@ -134,9 +133,9 @@ int check_input()
     }
   } else if (yPotVal > 600) {
 
-    if (current_time - last_rot > 300) {
+    if (current_time - last_up > 300) {
       action |= ACT_U;
-      last_rot = millis();
+      last_up = millis();
     }
   }
   return action;
@@ -149,20 +148,6 @@ void clearScreen() {
     }
   }
 }
-
-char * dummy_sprite[] = {
-  (char*)"5 5 5 1",
-  (char*)". c #660000",
-  (char*)"b c #56f9ff",
-  (char*)"# c #92f4df",
-  (char*)"a c #67efbf",
-  (char*)"c c #15e781",
-  (char*)".....",
-  (char*)".....",
-  (char*)"..#..",
-  (char*)".aba.",
-  (char*)"ca#ac"
-};
 
 // example usage: draw_xpm(dummy_sprite, 10, 10);
 void draw_xpm(char * xpm[], int xofs, int yofs)
@@ -188,11 +173,11 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
   }
 }
 
-uint8_t readHighScore() {
+uint8_t readHighScore(String s) {
   static uint8_t tmpScore = 0;
   static uint8_t memHighScore_snake = 0;
   static uint8_t memHighScore_tetris = 0;
-  if (choice == "snake") {
+  if (s == "snake") {
     for (int i = first_snake_score_adress; i < last_snake_score_adress + 1; i++) {
       tmpScore = EEPROM.read(i);
       if (tmpScore > memHighScore_snake) {
@@ -200,7 +185,7 @@ uint8_t readHighScore() {
       }
     }
   }
-  else if (choice == "tetris") {
+  else if (s == "tetris") {
     for (int i = first_tetris_score_adress; i < last_tetris_score_adress + 1; i++) {
       tmpScore = EEPROM.read(i);
       if (tmpScore > memHighScore_tetris) {
@@ -208,30 +193,30 @@ uint8_t readHighScore() {
       }
     }
   }
-  if (choice  == "snake") {
+  if (s  == "snake") {
     Serial.println("snake highscore = ");
     Serial.println(memHighScore_snake);
     return memHighScore_snake;
   }
-  else if (choice  == "tetris") {
+  else if (s  == "tetris") {
     return memHighScore_tetris;
   }
 
 }
 
-void writeHighScore() {
+void writeHighScore(String s) {
   Serial.println("write highscore");
   Serial.print("Game = ");
-  Serial.println(choice );
+  Serial.println(s);
   int tmpAdr = 0;
-  if (choice  == "snake") {
+  if (s == "snake") {
     tmpAdr = first_snake_score_adress;
     while (EEPROM.read(tmpAdr) != 0 && tmpAdr <= last_snake_score_adress) {
       tmpAdr++;
     }
     EEPROM.write(tmpAdr, highScore_snake);
   }
-  else if (choice  == "tetris") {
+  else if (s == "tetris") {
     tmpAdr = first_tetris_score_adress;
     while (EEPROM.read(tmpAdr) != 0 && tmpAdr <= last_tetris_score_adress) {
       tmpAdr++;
@@ -294,51 +279,88 @@ void hsAnimation() {
   Serial.println("animation");
 }
 
-void setup() {
+void tester();
+void bright_setting();
+
+struct arcade_screen {
+  char * name;
+  void (*loop_fn)(void);
+  void (*setup_fn)(void);
+} ;
+
+struct arcade_screen home_screen = {
+  .name = (char*)"HOME",
+  .loop_fn = &home_screen_loop,
+  .setup_fn = &home_screen_setup
+};
+
+struct arcade_screen tetris_screen = {
+  .name = (char*)"TETRIS",
+  .loop_fn = &tetris_loop,
+  .setup_fn = &tetris_setup
+};
+
+struct arcade_screen snake_screen = {
+  .name = (char*)"SNAKE",
+  .loop_fn = &snake_loop,
+  .setup_fn = &snake_setup
+};
+
+struct arcade_screen setting_screen = {
+  .name = (char*)"SETING",
+  .loop_fn = &setting_screen_loop,
+  .setup_fn = &setting_screen_setup
+};
+struct arcade_screen current_screen;
+struct arcade_screen previous_screen;
+int screen_transition = 0;
+
+void switch_screen(struct arcade_screen * screen)
+{
+  // push/pop screen stack ??
+
+  // setup screen transition
+  //previous_screen = save_screen_image();
+  //screen_transition_start = millis();
+
+  current_screen = *screen;
+  current_screen.setup_fn();
+}
+
+void screen_transition_loop(void)
+{
+  if (screen_transition) {
+    // do screen transition stuff!
+    // use combination of saved screen graphics and
+    // current leds and show them neatly!
+    // set screen_transition to 0 when done!
+  }
+
+}
+
+void setup()
+{
   delay(1000);
   Serial1.begin(9600);
   Serial1.println("Setting up");
 
   x = w / 2;
   y = h / 2;
-  choice  = "snake";
-  highScore_snake = readHighScore();
-  choice  = "tetris";
-  highScore_tetris = readHighScore();
+  highScore_snake = readHighScore("snake");
+  highScore_tetris = readHighScore("tetris");
   choice  = "";
 
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
   GameOver = true;
   selection = false;
-
+  current_screen = home_screen;
 }
 
-void tester();
-void bright_setting();
-void loop() {
-
-  if (GameOver) {
-    clearScreen();
-    home_screen();
-    game_selection();
-
-  }
-
-  if (choice  == "snake") {
-    snake_loop();
-  }
-  else if (choice  == "tetris") {
-    tetris_loop();
-  }
-
-  else if (choice  == "setting") {
-    Serial.println("setting chosen");
-    clearScreen();
-    setting_screen();
-
-    if (choice == "bright") {
-      bright_setting();
-    }
+void loop()
+{
+  current_screen.loop_fn();
+  if (choice == "bright") {
+    bright_setting();
   }
 }
