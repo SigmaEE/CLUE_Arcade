@@ -201,24 +201,24 @@ void render(void)
 //dark green 0caf00
   int green = 0x0caf00;
   int orange = 0xff7300;
-  draw_color_xpm(green, numbers[tmp_score % 10],3,0);
-  draw_color_xpm(green, numbers[(tmp_score/10) % 10],7,0);
-  draw_color_xpm(green, numbers[(tmp_score/100) % 10],11,0);
-  draw_color_xpm(green, numbers[(tmp_score/1000) % 10],15,0);
-  draw_color_xpm(green, numbers[(tmp_score/10000) % 10],19,0);
+  draw_color_xpm(orange, numbers[tmp_score % 10],3,6);
+  draw_color_xpm(orange, numbers[(tmp_score/10) % 10],7,6);
+  draw_color_xpm(orange, numbers[(tmp_score/100) % 10],11,6);
+  draw_color_xpm(orange, numbers[(tmp_score/1000) % 10],15,6);
+  draw_color_xpm(orange, numbers[(tmp_score/10000) % 10],19,6);
 
 
 
-  draw_color_xpm(orange, numbers[tmp_hs % 10],3,6);
-  draw_color_xpm(orange, numbers[(tmp_hs/10) % 10],7,6);
-  draw_color_xpm(orange, numbers[(tmp_hs/100) % 10],11,6);
-  draw_color_xpm(orange, numbers[(tmp_hs/1000) % 10],15,6);
-  draw_color_xpm(orange, numbers[(tmp_hs/10000) % 10],19,6);
+  draw_color_xpm(green, numbers[tmp_hs % 10],3,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10) % 10],7,0);
+  draw_color_xpm(green, numbers[(tmp_hs/100) % 10],11,0);
+  draw_color_xpm(green, numbers[(tmp_hs/1000) % 10],15,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],19,0);
 
   draw_color_xpm(orange, numbers[tmp_level % 10], 29, 53);
   draw_color_xpm(orange, numbers[(tmp_level/10) % 10], 29, 47);
 
-  draw_color_xpm(green, numbers[tmp_combo % 10], 3, 53);
+  draw_color_xpm(green, numbers[(tmp_combo - 1) % 10], 3, 53);
 
   FastLED.show();
 #endif
@@ -271,16 +271,16 @@ void remove_filled_rows()
   }
 
   //40 * (n + 1)  100 * (n + 1) 300 * (n + 1) 1200 * (n + 1)
-  
-  if (temp_score == 1) score += 1*(level+1)*combo; 
-  else if (temp_score == 2) score += 2*(level+1)*combo; 
-  else if (temp_score == 3) score += 7*(level+1)*combo; 
-  else if (temp_score == 3) score += 30*(level+1)*combo;
-  
-  //score += temp_score; 
+
+  if (temp_score == 1) score += 1*(level+1)*combo;
+  else if (temp_score == 2) score += 2*(level+1)*combo;
+  else if (temp_score == 3) score += 7*(level+1)*combo;
+  else if (temp_score == 4) score += 30*(level+1)*combo;
+
+  //score += temp_score;
 
   //score += temp_score*combo;
-  
+
   if (temp_score >= 1){
     ++combo;
   }
@@ -325,7 +325,7 @@ void tetris_setup()
     }
   }
   score = 0;
-  combo = 0;
+  combo = 1;
   level = 0;
   speed_delay = 1000;
   last_tick = millis();
