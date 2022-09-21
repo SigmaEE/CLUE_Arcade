@@ -16,6 +16,9 @@ struct piece {
   int type;
   int squares[PHEIGHT][PWIDTH];
 };
+int combo = 1;
+int lines_cleared = 0;
+int level = 0;
 
 long int last_tick;
 
@@ -23,6 +26,7 @@ long int last_tick;
 int try_move_piece(struct piece * p, int dy, int dx);
 
 struct piece active_piece;
+struct piece next_piece;
 
 #define PTYPES 7
 char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4 + 1] = {
@@ -32,8 +36,8 @@ char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4 + 1] = {
     " #       #      "
   },
 
-  { "##  ##  ##  ##  ",
-    "##  ##  ##  ##  ",
+  { " ##  ##  ##  ## ",
+    " ##  ##  ##  ## ",
     "                ",
     "                "
   },
@@ -108,13 +112,16 @@ void rotate_piece(struct piece * p, int steps)
   }
 }
 
-void new_piece(struct piece * p)
+void new_piece(struct piece * new_p)
 {
-  p->origin_x = 3;
-  p->origin_y = 0;
-  p->rotation = 0;
-  p->type = random() % PTYPES;
-  get_shape(p, p->type, p->rotation);
+  struct piece p;
+  p.origin_x = 3;
+  p.origin_y = 0;
+  p.rotation = 0;
+  p.type = random() % PTYPES;
+  get_shape(&p, p.type, p.rotation);
+  *new_p = next_piece;
+  next_piece = p;
 }
 
 void print_piece(struct piece * p)
@@ -189,32 +196,59 @@ void render(void)
 #endif
   }
 #ifndef POSIX_BUILD
-  unsigned int tmp = score;
+  unsigned int tmp_score = score;
+  unsigned int tmp_hs = highScore_tetris;
+  unsigned int tmp_level = level;
+  unsigned int tmp_combo = combo;
   int i = 0;
-  while (tmp > 0) {
-    if (tmp & 1) {
-      leds[XY(0, i)] = CRGB::Blue;
-    } else {
-      leds[XY(0, i)] = CRGB::Red;
+  //orange ff7300
+//dark green 0caf00
+  int green = 0x0caf00;
+  int orange = 0xff7300;
+  draw_color_xpm(orange, numbers[tmp_score % 10],3,6);
+  draw_color_xpm(orange, numbers[(tmp_score/10) % 10],7,6);
+  draw_color_xpm(orange, numbers[(tmp_score/100) % 10],11,6);
+  draw_color_xpm(orange, numbers[(tmp_score/1000) % 10],15,6);
+  draw_color_xpm(orange, numbers[(tmp_score/10000) % 10],19,6);
+
+
+
+  draw_color_xpm(green, numbers[tmp_hs % 10],3,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10) % 10],7,0);
+  draw_color_xpm(green, numbers[(tmp_hs/100) % 10],11,0);
+  draw_color_xpm(green, numbers[(tmp_hs/1000) % 10],15,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],19,0);
+
+  draw_color_xpm(orange, numbers[tmp_level % 10], 29, 53);
+  draw_color_xpm(orange, numbers[(tmp_level/10) % 10], 29, 47);
+
+  draw_color_xpm(green, numbers[(tmp_combo - 1) % 10], 3, 53);
+
+  // draw next piece
+  for (int y = 0; y < PHEIGHT; ++y) {
+    for (int x = 0; x < PWIDTH; ++x) {
+      int field_val = next_piece.squares[y][x];
+      if (next_piece.squares[y][x] != 0) {
+        CRGB color;
+        switch (field_val) {
+          case 0: color = CRGB::Black; break;
+          case 1: color = CRGB::Red; break;
+          case 2: color = CRGB::Blue; break;
+          case 3: color = CRGB::Yellow; break;
+          case 4: color = CRGB::Purple; break;
+          case 5: color = CRGB::ForestGreen; break;
+          case 6: color = CRGB::Green; break;
+          case 7: color = CRGB::Brown; break;
+          case 8: color = CRGB::Grey; break;
+        }
+        leds[XY(27 - x * 2, 1 + y * 2)]     = color;
+        leds[XY(27 - x * 2, 1 + y * 2 + 1)] = color;
+        leds[XY(26 - x * 2, 1 + y * 2)]     = color;
+        leds[XY(26 - x * 2, 1 + y * 2 + 1)] = color;
+      }
     }
-    i++;
-    tmp = tmp >> 1;
   }
-  tmp = highScore_tetris;
-  i = 0;
-  while (tmp > 0) {
-    if (tmp & 1) {
-      leds[XY(29, i)] = CRGB::Blue;
-    } else {
-      leds[XY(29, i)] = CRGB::Red;
-    }
-    i++;
-    tmp = tmp >> 1;
-  }
-  int time = millis();
   FastLED.show();
-  Serial.print("FastLED.show() time: ");
-  Serial.println(millis() - time);
 #endif
 
 #ifdef POSIX_BUILD
@@ -251,21 +285,31 @@ void remove_filled_rows()
       ++temp_score;
       ++lines_cleared;
       if (lines_cleared % 3 == 0){
-      if (speed_delay > 100)
-      {
-        speed_delay *= 0.85;
+        if (speed_delay > 100)
+        {
+          level++;
+          speed_delay *= 0.85;
+        }
       }
     }
-      for (int move_row = row; move_row > 0; --move_row) {
-        //memcpy(&field[move_row][0], &field[move_row - 1][0], 10);
-        for (int move_col = 0; move_col < COLUMNS; ++move_col) {
-          field[move_row][move_col] = field[move_row - 1][move_col];
-        }
+    for (int move_row = row; move_row > 0; --move_row) {
+      //memcpy(&field[move_row][0], &field[move_row - 1][0], 10);
+      for (int move_col = 0; move_col < COLUMNS; ++move_col) {
+        field[move_row][move_col] = field[move_row - 1][move_col];
       }
     }
   }
 
-  score += temp_score*combo;
+  //40 * (n + 1)  100 * (n + 1) 300 * (n + 1) 1200 * (n + 1)
+
+  if (temp_score == 1) score += 1*(level+1)*combo;
+  else if (temp_score == 2) score += 2*(level+1)*combo;
+  else if (temp_score == 3) score += 7*(level+1)*combo;
+  else if (temp_score == 4) score += 30*(level+1)*combo;
+
+  //score += temp_score;
+
+  //score += temp_score*combo;
 
   if (temp_score >= 1){
     ++combo;
@@ -311,8 +355,11 @@ void tetris_setup()
     }
   }
   score = 0;
+  combo = 1;
+  level = 0;
   speed_delay = 1000;
   last_tick = millis();
+  new_piece(&active_piece);
   new_piece(&active_piece);
   render();
   GameOver = false;
@@ -367,6 +414,7 @@ void tetris_loop() {
   if (action & ACT_D) {
     if (!try_move_piece(&active_piece, 1, 0)) {
       stick_piece(&active_piece);
+      Serial.print("HERE''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''!");
       remove_filled_rows();
       new_piece(&active_piece);
       if (0 == try_move_piece(&active_piece, 0, 0)) {

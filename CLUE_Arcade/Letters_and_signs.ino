@@ -127,3 +127,200 @@ int All_letters[][Letter_size_row][Letter_size_col] = {
 	}
 };
 
+int E_letter[Letter_size_row][Letter_size_col] = { { 1, 1, 1, 1 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 1, 1, 0 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 1, 1, 1 }
+                                                 };
+
+int G_letter[Letter_size_row][Letter_size_col] = { { 0, 1, 1, 1 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 0, 1, 1 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 0, 1, 1, 1 }
+                                                 };
+
+int H_letter[Letter_size_row][Letter_size_col] = { { 1, 0, 0, 1 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 1, 1, 1, 1 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 1, 0, 0, 1 }
+                                                 };
+
+int I_letter[Letter_size_row][Letter_size_col] = { { 1, 1, 1, 1 },
+                                                   { 0, 1, 1, 0 },
+                                                   { 0, 1, 1, 0 },
+                                                   { 0, 1, 1, 0 },
+                                                   { 1, 1, 1, 1 }
+                                                 };
+
+int K_letter[Letter_size_row][Letter_size_col] = { { 1, 0, 0, 1 },
+                                                   { 1, 0, 1, 0 },
+                                                   { 1, 1, 0, 0 },
+                                                   { 1, 0, 1, 0 },
+                                                   { 1, 0, 0, 1 }
+                                                 };
+
+int L_letter[Letter_size_row][Letter_size_col] = { { 1, 0, 0, 0 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 1, 1, 1 }
+                                                 };
+
+int N_letter[Letter_size_row][Letter_size_col] = { { 1, 0, 0, 1 },
+                                                   { 1, 1, 0, 1 },
+                                                   { 1, 1, 1, 1 },
+                                                   { 1, 0, 1, 1 },
+                                                   { 1, 0, 0, 1 }
+                                                  };
+
+int R_letter[Letter_size_row][Letter_size_col] = { { 1, 1, 1, 0 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 1, 1, 1, 0 },
+                                                   { 1, 0, 1, 0 },
+                                                   { 1, 0, 0, 1 }
+                                                 };
+
+int S_letter[Letter_size_row][Letter_size_col] = { { 1, 1, 1, 1 },
+                                                   { 1, 0, 0, 0 },
+                                                   { 1, 1, 1, 1 },
+                                                   { 0, 0, 0, 1 },
+                                                   { 1, 1, 1, 1 }
+                                                 };
+
+int T_letter[Letter_size_row][Letter_size_col] = { { 1, 1, 1, 1 },
+                                                   { 1, 1, 1, 1 },
+                                                   { 0, 1, 1, 0 },
+                                                   { 0, 1, 1, 0 },
+                                                   { 0, 1, 1, 0 }
+                                                 };
+int U_letter[Letter_size_row][Letter_size_col] = { { 1, 0, 0, 1 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 1, 0, 0, 1 },
+                                                   { 1, 1, 1, 1 }
+                                                 };
+static char *number_0[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)".#.#",
+(char*)".#.#",
+(char*)".#.#",
+(char*)"...#",
+(char*)"####"};
+
+static char *number_1[]={
+(char*)"4 6 2 1",
+(char*)"# c #25d522",
+(char*)". c #000000",
+(char*)"..#.",
+(char*)"..#.",
+(char*)"..#.",
+(char*)"..#.",
+(char*)"..#.",
+(char*)"...."};
+
+static char *number_2[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)"##.#",
+(char*)"...#",
+(char*)".###",
+(char*)"...#",
+(char*)"####"};
+
+static char *number_3[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)"##.#",
+(char*)"...#",
+(char*)"##.#",
+(char*)"...#",
+(char*)"####"};
+
+static char *number_4[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)".#.#",
+(char*)".#.#",
+(char*)"...#",
+(char*)"##.#",
+(char*)"##.#",
+(char*)"####"};
+
+static char *number_5[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)".###",
+(char*)"...#",
+(char*)"##.#",
+(char*)"...#",
+(char*)"####"};
+
+static char *number_6[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)".###",
+(char*)"...#",
+(char*)".#.#",
+(char*)"...#",
+(char*)"####"};
+
+static char *number_7[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)"##.#",
+(char*)"##.#",
+(char*)"##.#",
+(char*)"##.#",
+(char*)"####"};
+
+static char *number_8[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)".#.#",
+(char*)"...#",
+(char*)".#.#",
+(char*)"...#",
+(char*)"####"};
+
+static char *number_9[]={
+(char*)"4 6 2 1",
+(char*)". c #25d522",
+(char*)"# c #000000",
+(char*)"...#",
+(char*)".#.#",
+(char*)"...#",
+(char*)"##.#",
+(char*)"...#",
+(char*)"####"};
+
+char ** numbers[] = {
+    number_0,
+    number_1,
+    number_2,
+    number_3,
+    number_4,
+    number_5,
+    number_6,
+    number_7,
+    number_8,
+    number_9,
+};
