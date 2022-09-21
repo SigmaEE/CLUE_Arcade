@@ -127,7 +127,8 @@ struct menu_item {
 struct menu_item home_menu[] = {
   { (char*)"SNAKE", CRGB::Yellow, &snake_screen },
   { (char*)"TETRIS", CRGB::Red, &tetris_screen },
-  { (char*)"SETING", CRGB::Green, &setting_screen }
+  { (char*)"CONFIG", CRGB::Green, &setting_screen },
+  { (char*)"TEST", CRGB::Purple, &letter_input_screen }
 };
 
 void draw_menu(struct menu_item * menu, int nitems, int x, int y)
@@ -152,7 +153,6 @@ void home_screen_loop()
   draw_word(clue_start_pos_col, clue_start_pos_row, (char*)"CLUE", 0x0000ff);
   draw_word(arcade_start_pos_col, arcade_start_pos_row + 1, (char*)"ARCADE", 0x0000ff);
 
-
   select_line(line1_start_pos_col, line1_length, menu_pos * 8 + line1_start_pos_row);
   select_line(line2_start_pos_col, line2_length, menu_pos * 8 + line2_start_pos_row);
 
@@ -163,32 +163,26 @@ void home_screen_loop()
 
   FastLED.show();
   if (selection == false) {
-      action = check_input();
+    action = check_input();
+    delay(1);
+    if (action & ACT_U) {
+      if (menu_pos > 0) {
+        menu_pos--;
+        scroll_move_home -= (Letter_size_row + word_margin - 1);
+      }
+    }
+    if (action & ACT_D) {
+      if (menu_pos < (sizeof(home_menu) / sizeof(home_menu[0])) - 1) {
+        menu_pos++;
+        scroll_move_home += (Letter_size_row + word_margin - 1);
+      }
+    }
+    if (action & ACT_R) {
+      selection = true;
       delay(1);
-      if (action & ACT_U) {
-        if (scroll_move_home > 0) {
-          menu_pos--;
-          scroll_move_home -= (Letter_size_row + word_margin - 1);
-        }
-      }
-      if (action & ACT_D) {
-        if (scroll_move_home < 2 * (Letter_size_row + word_margin - 1)) {
-          menu_pos++;
-          scroll_move_home += (Letter_size_row + word_margin - 1);
-        }
-      }
-      if (action & ACT_R) {
-        selection = true;
-        delay(1);
-        if (scroll_move_home == 0 * (Letter_size_row + word_margin - 1)) {
-          switch_screen(&snake_screen);
-        } else if (scroll_move_home == 1 * (Letter_size_row + word_margin - 1)) {
-          switch_screen(&tetris_screen);
-        } else {
-          switch_screen(&setting_screen);
-        }
-        selection = false;
-        GameOver = false;
-      }
+      switch_screen(home_menu[menu_pos].screen);
+    }
+    selection = false;
+    GameOver = false;
   }
 }

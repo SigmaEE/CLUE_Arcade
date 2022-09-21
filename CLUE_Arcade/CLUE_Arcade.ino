@@ -50,6 +50,8 @@ int letter[Letter_size_row][Letter_size_col];
 String choice  = "none";
 void home_screen_loop();
 void home_screen_setup();
+void input_screen_loop();
+void input_screen_setup();
 void game_selection();
 int check_input();
 void snake_setup();
@@ -233,6 +235,7 @@ uint8_t readHighScore(String s) {
     return memHighScore_tetris;
   }
 
+  return 0;
 }
 
 void writeHighScore(String s) {
@@ -318,11 +321,16 @@ struct arcade_screen {
   void (*loop_fn)(void);
   void (*setup_fn)(void);
 } ;
-
 struct arcade_screen home_screen = {
   .name = (char*)"HOME",
   .loop_fn = &home_screen_loop,
   .setup_fn = &home_screen_setup
+};
+
+struct arcade_screen letter_input_screen = {
+  .name = (char*)"INPUT",
+  .loop_fn = &input_screen_loop,
+  .setup_fn = &input_screen_setup
 };
 
 struct arcade_screen tetris_screen = {

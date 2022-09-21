@@ -271,8 +271,6 @@ void stick_piece(struct piece * p)
 
 void remove_filled_rows()
 {
-  static int combo = 1;
-  static int lines_cleared = 0;
   int temp_score = 0;
   for (int row = 0; row < ROWS; ++row) {
     int filled = 1;
@@ -291,11 +289,11 @@ void remove_filled_rows()
           speed_delay *= 0.85;
         }
       }
-    }
-    for (int move_row = row; move_row > 0; --move_row) {
-      //memcpy(&field[move_row][0], &field[move_row - 1][0], 10);
-      for (int move_col = 0; move_col < COLUMNS; ++move_col) {
-        field[move_row][move_col] = field[move_row - 1][move_col];
+      for (int move_row = row; move_row > 0; --move_row) {
+        //memcpy(&field[move_row][0], &field[move_row - 1][0], 10);
+        for (int move_col = 0; move_col < COLUMNS; ++move_col) {
+          field[move_row][move_col] = field[move_row - 1][move_col];
+        }
       }
     }
   }

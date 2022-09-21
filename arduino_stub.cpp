@@ -127,6 +127,8 @@ void setting_screen_loop(void);
 void setting_screen_setup(void);
 
 #include "CLUE_Arcade/CLUE_Arcade.ino"
+#include "CLUE_Arcade/input_screen.ino"
+#include "CLUE_Arcade/Mem_high_score.ino"
 #include "CLUE_Arcade/Letters_and_signs.ino"
 #include "CLUE_Arcade/Setting_screen.ino"
 #include "CLUE_Arcade/snake.ino"
