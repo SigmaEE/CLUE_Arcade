@@ -300,16 +300,10 @@ void remove_filled_rows()
     }
   }
 
-  //40 * (n + 1)  100 * (n + 1) 300 * (n + 1) 1200 * (n + 1)
-
   if (temp_score == 1) score += 1*(level+1)*combo;
   else if (temp_score == 2) score += 2*(level+1)*combo;
   else if (temp_score == 3) score += 7*(level+1)*combo;
   else if (temp_score == 4) score += 30*(level+1)*combo;
-
-  //score += temp_score;
-
-  //score += temp_score*combo;
 
   if (temp_score >= 1){
     ++combo;
