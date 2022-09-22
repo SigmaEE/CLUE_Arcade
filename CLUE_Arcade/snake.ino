@@ -170,8 +170,9 @@ void snake_setup() {
   score = 0;
 }
 
-void snake_loop() {
-  while (GameOver == false) {
+void snake_loop()
+{
+  if (GameOver != true) {
     draw();
     inPut();
     logic();
@@ -224,19 +225,6 @@ void snake_loop() {
     clearScreen();
     FastLED.show();
 
-    //
-    //    for (int j = 0; j < kMatrixHeight; j++) {
-    //      for ( int i = 0; i < kMatrixWidth; i++) {
-    //
-    //        leds[XY(i, j)] = CRGB::Black;
-    //      }
-    //      FastLED.show();
-    //    }
-
-    //GameOver = false;
     nTail = 3;
   }
-  //
-  //FastLED.show();
-  //delay(30);
 }
