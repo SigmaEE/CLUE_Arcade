@@ -2,3 +2,4 @@
 tetris
 *.o
 arcade_sim
+eeprom.bin

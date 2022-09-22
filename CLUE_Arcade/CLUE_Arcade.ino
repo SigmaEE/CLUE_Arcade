@@ -2,6 +2,7 @@
 #include <FastLED.h>
 #include <EEPROM.h>
 #include "src/CLUE_Arcade.h"
+#include "src/Mem_high_score.h"
 
 #define LED_PIN  3
 
