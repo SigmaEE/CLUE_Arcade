@@ -200,7 +200,6 @@ void render(void)
   unsigned int tmp_hs = highScore_tetris;
   unsigned int tmp_level = level;
   unsigned int tmp_combo = combo;
-  int i = 0;
   //orange ff7300
 //dark green 0caf00
   int green = 0x0caf00;

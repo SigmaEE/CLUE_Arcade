@@ -5,13 +5,12 @@
   if (selection == false) {
     Serial.println("First loop");
     action = check_input();
-    /*
     if (action == ACT_NONE || action == ACT_L) { //home screen stays until up or down input on joystick
       action = check_input();
       game_selection();
       delay(1);
     }
-    
+
 
     Serial.println("while loop over");
     if (action & ACT_U) {

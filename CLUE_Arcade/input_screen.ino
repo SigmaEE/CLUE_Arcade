@@ -14,6 +14,7 @@ void input_screen_setup()
 void input_screen_loop()
 {
 
+  clearScreen();
   for (int y = 25; y < 35; y++) {
     for (int x = 0; x < 25; x++)  {
       leds[XY(25 - x, y)] = 0x000000;
@@ -29,7 +30,7 @@ void input_screen_loop()
   FastLED.show();
 
   int action = check_input();
-  if (action & ACT_U) {
+  if (action & ACT_D) {
     if (letter_cur_char == INPUT_MAX_LETTERS + 1) {
       switch_screen(&home_screen);
     } else if (letter_cur_char < INPUT_MAX_LETTERS) {
@@ -39,7 +40,7 @@ void input_screen_loop()
       }
     }
   }
-  if (action & ACT_D) {
+  if (action & ACT_U) {
     if (letter_cur_char < INPUT_MAX_LETTERS) {
       letter_input[letter_cur_char]--;
       if (letter_input[letter_cur_char] < 'A') {

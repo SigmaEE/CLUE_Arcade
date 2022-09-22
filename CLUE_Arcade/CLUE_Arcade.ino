@@ -156,7 +156,6 @@ void clearScreen() {
 void draw_xpm(char * xpm[], int xofs, int yofs)
 {
   int w, h, n_colors, depth;
-  char dummy;
   sscanf(xpm[0], "%d %d %d %d", &w, &h, &n_colors, &depth);
 
   for (int y = 0; y < h; y++) {
@@ -180,7 +179,6 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
 void draw_color_xpm(int color, char * xpm[], int xofs, int yofs)
 {
   int w, h, n_colors, depth;
-  char dummy;
   sscanf(xpm[0], "%d %d %d %d", &w, &h, &n_colors, &depth);
 
   for (int y = 0; y < h; y++) {
