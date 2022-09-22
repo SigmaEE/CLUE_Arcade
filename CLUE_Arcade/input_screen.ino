@@ -2,6 +2,7 @@ int letter_cur_char = 0;
 #define INPUT_MAX_LETTERS 3
 char letter_input[INPUT_MAX_LETTERS + 1];
 void draw_word(int x, int y, char * str, uint32_t color);
+int input_start_time = 0;
 void input_screen_setup()
 {
    letter_cur_char = 0;
@@ -9,6 +10,17 @@ void input_screen_setup()
      letter_input[i] = 'A';
    }
    letter_input[INPUT_MAX_LETTERS] = '\0';
+   input_start_time = millis();
+}
+
+int get_cursor_color(void)
+{
+  #define PERIOD (2000)
+  int tmp = (millis() - input_start_time) % PERIOD;
+  double d = (double)tmp / (double)PERIOD;
+
+  int color = sin(d * 3.1415926) * 255;
+  return color + (color << 8) + (color << 16);
 }
 
 void input_screen_loop()
@@ -23,7 +35,7 @@ void input_screen_loop()
 
   draw_word(25, 25, letter_input, 0x804000);
   for (int x = 0; x < 4; x++)  {
-    leds[XY(25 - 5 * letter_cur_char - x, 31)] = 0xe0e0e0;
+    leds[XY(25 - 5 * letter_cur_char - x, 31)] = get_cursor_color();
   }
 
   draw_word(25 - 5 * (INPUT_MAX_LETTERS + 1), 25, (char*)"\\", 0x00ff00);
@@ -31,9 +43,7 @@ void input_screen_loop()
 
   int action = check_input();
   if (action & ACT_D) {
-    if (letter_cur_char == INPUT_MAX_LETTERS + 1) {
-      switch_screen(&home_screen);
-    } else if (letter_cur_char < INPUT_MAX_LETTERS) {
+    if (letter_cur_char < INPUT_MAX_LETTERS) {
       letter_input[letter_cur_char]++;
       if (letter_input[letter_cur_char] > 'V') {
         letter_input[letter_cur_char] = 'A';
@@ -46,6 +56,9 @@ void input_screen_loop()
       if (letter_input[letter_cur_char] < 'A') {
         letter_input[letter_cur_char] = 'V';
       }
+    } else if (letter_cur_char == INPUT_MAX_LETTERS + 1) {
+      // DONE!
+      switch_screen(&home_screen);
     }
   }
   if (action & ACT_L) {
