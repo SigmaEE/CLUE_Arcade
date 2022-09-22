@@ -174,8 +174,7 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
     }
   }
 }
-//orange ff7300
-//dark green 0caf00
+
 void draw_color_xpm(int color, char * xpm[], int xofs, int yofs)
 {
   int w, h, n_colors, depth;
@@ -191,15 +190,13 @@ void draw_color_xpm(int color, char * xpm[], int xofs, int yofs)
 
         }
       }
-      if (r != 0x00 && g != 0x00 && b != 0x00) leds[XY(xofs - x, yofs + y)] = color;
-      else {
+      if (r != 0x00 && g != 0x00 && b != 0x00) {
+        leds[XY(xofs - x, yofs + y)] = color;
+      } else {
         leds[XY(xofs - x, yofs + y)].r = r;
         leds[XY(xofs - x, yofs + y)].g = g;
-        leds[XY(xofs - x, yofs + y)].b = b;   
-      }  
-      //sscanf(*color, "%*c %*c #%02x%02x%02x", &r, &g, &b);     
-      //leds[XY(xofs - x, yofs + y)] = color;
-    
+        leds[XY(xofs - x, yofs + y)].b = b;
+      }
     }
   }
 }
@@ -236,7 +233,8 @@ uint8_t readHighScore(String s) {
   return 0;
 }
 
-void writeHighScore(String s) {
+void writeHighScore(String s)
+{
   Serial.println("write highscore");
   Serial.print("Game = ");
   Serial.println(s);
@@ -258,8 +256,8 @@ void writeHighScore(String s) {
   }
 }
 
-void deathAnimation() {
-
+void deathAnimation()
+{
   delay(100);
   for (int i = -1; i < 2; i++) {
     leds[XY(x + i, y + 1)] = CRGB::Red;
