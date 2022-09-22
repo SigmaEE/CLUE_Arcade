@@ -2,6 +2,7 @@
 # include <FastLED.h>
 # include <EEPROM.h>
 #endif
+#include "src/tetris.h"
 
 #define ROWS 20
 #define COLUMNS 10
@@ -20,10 +21,11 @@ int combo = 1;
 int lines_cleared = 0;
 int level = 0;
 
+bool GameOver_tetris;
+
 long int last_tick;
 
 // forward declaration
-int try_move_piece(struct piece * p, int dy, int dx);
 
 struct piece active_piece;
 struct piece next_piece;
@@ -357,18 +359,13 @@ void tetris_setup()
   GameOver_tetris = false;
 }
 
-void draw_plasma();
-
 void tetris_loop() {
   long int current_time;
   if (GameOver_tetris) {
     if (score > highScore_tetris) {
-      Serial.print("highscore!");
       highScore_tetris = score;
       writeHighScore("tetris");
-      Serial.print("highscore written''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''!");
       hsAnimation();
-      Serial.print("animation");
     }
     deathAnimation();
 
@@ -405,7 +402,6 @@ void tetris_loop() {
   if (action & ACT_D) {
     if (!try_move_piece(&active_piece, 1, 0)) {
       stick_piece(&active_piece);
-      Serial.print("HERE''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''!");
       remove_filled_rows();
       new_piece(&active_piece);
       if (0 == try_move_piece(&active_piece, 0, 0)) {

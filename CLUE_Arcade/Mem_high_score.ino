@@ -3,25 +3,7 @@
 #define TETRIS_ADR_START 80
 #define TETRIS_ADR_END 160
 
-struct hs_player {
-  char name[4]={'-','-','-','-'};
-  int score=0;
-};
-
-struct hs_board {
-  struct hs_player scores[10];
-};
-
-void clear_high_score(String game_choice);
-void re_arrange_board(int position, struct hs_board &board);
-void read_high_score_board(String game_choice, struct hs_board &board);
-void write_high_score(String game_choice, struct hs_player &player);
-void read_high_score_top(String game_choice, struct hs_player &top_player);
-void read_high_score_low(String game_choice, struct hs_player &top_player);
-
-void clear_all_memory();
-void print_all_memory();
-void print_all_high_score(String game_choice);
+#include "src/Mem_high_score.h"
 
 void print_all_memory()
 {
@@ -86,7 +68,6 @@ void read_high_score_board(String game_choice, struct hs_board &board)
   }
   EEPROM.get(start_adr, board);
 }
-
 
 void read_high_score_top(String game_choice, struct hs_player &top_player)
 {

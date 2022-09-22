@@ -1,6 +1,8 @@
 ///// LED Related
 #include <FastLED.h>
 #include <EEPROM.h>
+#include "src/CLUE_Arcade.h"
+
 #define LED_PIN  3
 
 // fastled takes 53/52 milliseconds to render!
@@ -42,8 +44,6 @@ const int start_h = 16;
 const int end_h = h;
 
 bool GameOver;
-bool GameOver_tetris;
-bool GameOver_snake;
 bool selection;
 int x, y,  highScore_snake, highScore_tetris;
 int letter[Letter_size_row][Letter_size_col];
@@ -54,10 +54,6 @@ void input_screen_loop();
 void input_screen_setup();
 void game_selection();
 int check_input();
-void snake_setup();
-void tetris_setup();
-void snake_loop();
-void tetris_loop();
 
 #define NUM_LEDS (kMatrixWidth * kMatrixHeight)
 CRGB leds_plus_safety_pixel[ NUM_LEDS + 1];
@@ -165,7 +161,6 @@ void draw_xpm(char * xpm[], int xofs, int yofs)
       for (char ** col_str = &xpm[1]; col_str <= &xpm[n_colors]; col_str++) {
         if (**col_str == xpm[n_colors + 1 + y][x]) { // match! grab color value
           sscanf(*col_str, "%*c %*c #%02x%02x%02x", &r, &g, &b);
-
         }
       }
       leds[XY(xofs - x, yofs + y)].r = r;
@@ -187,7 +182,6 @@ void draw_color_xpm(int color, char * xpm[], int xofs, int yofs)
       for (char ** col_str = &xpm[1]; col_str <= &xpm[n_colors]; col_str++) {
         if (**col_str == xpm[n_colors + 1 + y][x]) { // match! grab color value
           sscanf(*col_str, "%*c %*c #%02x%02x%02x", &r, &g, &b);
-
         }
       }
       if (r != 0x00 && g != 0x00 && b != 0x00) {
@@ -312,11 +306,7 @@ void hsAnimation() {
 void tester();
 void bright_setting();
 
-struct arcade_screen {
-  char * name;
-  void (*loop_fn)(void);
-  void (*setup_fn)(void);
-} ;
+
 struct arcade_screen home_screen = {
   .name = (char*)"HOME",
   .loop_fn = &home_screen_loop,
@@ -329,23 +319,12 @@ struct arcade_screen letter_input_screen = {
   .setup_fn = &input_screen_setup
 };
 
-struct arcade_screen tetris_screen = {
-  .name = (char*)"TETRIS",
-  .loop_fn = &tetris_loop,
-  .setup_fn = &tetris_setup
-};
-
-struct arcade_screen snake_screen = {
-  .name = (char*)"SNAKE",
-  .loop_fn = &snake_loop,
-  .setup_fn = &snake_setup
-};
-
 struct arcade_screen setting_screen = {
   .name = (char*)"SETING",
   .loop_fn = &setting_screen_loop,
   .setup_fn = &setting_screen_setup
 };
+
 struct arcade_screen current_screen;
 struct arcade_screen previous_screen;
 int screen_transition = 0;

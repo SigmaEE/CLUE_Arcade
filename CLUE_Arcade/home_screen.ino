@@ -1,3 +1,6 @@
+#include "src/tetris.h"
+#include "src/snake.h"
+
 int scroll_move_home = 0;
 int menu_pos = 0;
 
