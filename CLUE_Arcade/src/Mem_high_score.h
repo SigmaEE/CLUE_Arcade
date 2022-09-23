@@ -17,8 +17,8 @@ void write_high_score(String game_choice, struct hs_player &player, struct hs_bo
 int read_high_score_top(String game_choice);
 int read_high_score_low(String game_choice);
 
+void print_hs_mem(String game_choice);
 void clear_all_memory();
 void print_all_memory();
-void print_all_high_score(String game_choice);
 
 #endif
