@@ -183,7 +183,7 @@ void snake_loop()
     if (score >  read_high_score_low('t')) {
       struct hs_player player;
       new_hs_player(score, player);
-      update_score_board('s', player, curr_snake_board);
+      write_high_score('s', player, curr_snake_board);
       hsAnimation();
       unsigned int tmp = read_high_score_top('s'); // WHAT IS THIS FOR?
       int i = 0;

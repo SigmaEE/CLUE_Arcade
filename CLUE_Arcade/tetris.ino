@@ -365,7 +365,7 @@ void tetris_loop() {
     if (score >  read_high_score_low('t')) {
       struct hs_player player;
       new_hs_player(score, player);
-      update_score_board('t', player, curr_tetris_board);
+      write_high_score('t', player, curr_tetris_board);
       hsAnimation();
     }
     deathAnimation();

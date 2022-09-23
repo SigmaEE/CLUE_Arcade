@@ -22,7 +22,7 @@ void clear_all_memory()
 void clear_high_score(String game_choice) {
   struct hs_board curr_board;
   int start_adr;
-  clear_all_memory();
+  //clear_all_memory();
   if (game_choice == "t") {
     start_adr = TETRIS_ADR_START;
   }
@@ -56,6 +56,10 @@ void write_high_score(String game_choice, struct hs_player &player, struct hs_bo
   if (game_choice == "t") {
     start_adr = TETRIS_ADR_START;
   }
+  else if (game_choice == "s") {
+    start_adr = SNAKE_ADR_START;
+  }
+
   EEPROM.put(start_adr, board);
 }
 
@@ -68,13 +72,6 @@ void read_high_score_board(String game_choice, struct hs_board &board)
     start_adr = SNAKE_ADR_START;
   }
   EEPROM.get(start_adr, board);
-}
-
-
-void update_score_board(String game_choice, struct hs_player &player, struct hs_board &board)
-{
-  write_high_score(game_choice, player, board);
-  read_high_score_board(game_choice, board);
 }
 
 
