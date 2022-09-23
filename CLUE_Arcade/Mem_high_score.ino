@@ -1,7 +1,7 @@
-#define SNAKE_ADR_STRART 0
+#define SNAKE_ADR_START 0
 #define SNAKE_ADR_END 79
-#define TETRIS_ADR_START 80
-#define TETRIS_ADR_END 160
+#define TETRIS_ADR_START 100
+#define TETRIS_ADR_END 179
 
 #include "src/Mem_high_score.h"
 
@@ -36,19 +36,18 @@ void re_arrange_board(int position, struct hs_board &board)
   }
 }
 
-void write_high_score(String game_choice, struct hs_player &player)
+void write_high_score(String game_choice, struct hs_player &player, struct hs_board &board)
 {
-  struct hs_board curr_board;
 
-  read_high_score_board(game_choice, curr_board);
+  //read_high_score_board(game_choice, curr_board);
   int new_score = player.score;
   int tmp_score;
 
   for (int i=0; i<10; i++) {
-    tmp_score = curr_board.scores[i].score;
+    tmp_score = board.scores[i].score;
     if (new_score > tmp_score) {
-      re_arrange_board(i, curr_board);
-      curr_board.scores[i] = player;
+      re_arrange_board(i, board);
+      board.scores[i] = player;
       break;
     }
   }
@@ -57,7 +56,7 @@ void write_high_score(String game_choice, struct hs_player &player)
   if (game_choice == "t") {
     start_adr = TETRIS_ADR_START;
   }
-  EEPROM.put(start_adr, curr_board);
+  EEPROM.put(start_adr, board);
 }
 
 void read_high_score_board(String game_choice, struct hs_board &board)
@@ -65,19 +64,32 @@ void read_high_score_board(String game_choice, struct hs_board &board)
   int start_adr;
   if (game_choice == "t") {
     start_adr = TETRIS_ADR_START;
+  } else if (game_choice == "s") {
+    start_adr = SNAKE_ADR_START;
   }
   EEPROM.get(start_adr, board);
 }
 
-void read_high_score_top(String game_choice, struct hs_player &top_player)
+
+void update_score_board(String game_choice, struct hs_player &player, struct hs_board &board)
 {
-  struct hs_board curr_board;
-  read_high_score_board(game_choice, curr_board);
-  top_player = curr_board.scores[0];
+  write_high_score(game_choice, player, board);
+  read_high_score_board(game_choice, board);
 }
 
-void read_high_score_low(String game_choice, struct hs_player &low_player)
+
+int read_high_score_top(String game_choice)
 {
+  struct hs_board curr_board;
+  struct hs_player top_player;
+  read_high_score_board(game_choice, curr_board);
+
+  return curr_board.scores[0].score;
+}
+
+int read_high_score_low(String game_choice)
+{
+  struct hs_player low_player;
   struct hs_board curr_board;
   read_high_score_board(game_choice, curr_board);
   for (int i=0; i<10; i++) {
@@ -88,4 +100,5 @@ void read_high_score_low(String game_choice, struct hs_player &low_player)
       low_player = curr_board.scores[9];
     }
   }
+  return low_player.score;
 }

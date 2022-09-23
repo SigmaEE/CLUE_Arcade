@@ -24,11 +24,6 @@ int BRIGHTNESS = 50;
 #define ACT_RN (1 << 4)
 #define ACT_Q  (1 << 5)
 
-#define first_snake_score_adress 0
-#define last_snake_score_adress 255
-#define first_tetris_score_adress 256
-#define last_tetris_score_adress 512
-
 // Params for width and height
 #define kMatrixWidth (30)
 #define kMatrixHeight (58)
@@ -46,7 +41,7 @@ const int end_h = h;
 
 bool GameOver;
 bool selection;
-int x, y,  highScore_snake, highScore_tetris;
+int x, y;
 int letter[Letter_size_row][Letter_size_col];
 String choice  = "none";
 void home_screen_loop();
@@ -59,6 +54,9 @@ int check_input();
 #define NUM_LEDS (kMatrixWidth * kMatrixHeight)
 CRGB leds_plus_safety_pixel[ NUM_LEDS + 1];
 CRGB* const leds( leds_plus_safety_pixel + 1);
+
+struct hs_board curr_tetris_board;
+struct hs_board curr_snake_board;
 
 uint16_t XY( uint8_t x, uint8_t y)
 {
@@ -196,61 +194,6 @@ void draw_color_xpm(int color, char * xpm[], int xofs, int yofs)
   }
 }
 
-uint8_t readHighScore(String s) {
-  static uint8_t tmpScore = 0;
-  static uint8_t memHighScore_snake = 0;
-  static uint8_t memHighScore_tetris = 0;
-  if (s == "snake") {
-    for (int i = first_snake_score_adress; i < last_snake_score_adress + 1; i++) {
-      tmpScore = EEPROM.read(i);
-      if (tmpScore > memHighScore_snake) {
-        memHighScore_snake = tmpScore;
-      }
-    }
-  }
-  else if (s == "tetris") {
-    for (int i = first_tetris_score_adress; i < last_tetris_score_adress + 1; i++) {
-      tmpScore = EEPROM.read(i);
-      if (tmpScore > memHighScore_tetris) {
-        memHighScore_tetris = tmpScore;
-      }
-    }
-  }
-  if (s  == "snake") {
-    Serial.println("snake highscore = ");
-    Serial.println(memHighScore_snake);
-    return memHighScore_snake;
-  }
-  else if (s  == "tetris") {
-    return memHighScore_tetris;
-  }
-
-  return 0;
-}
-
-void writeHighScore(String s)
-{
-  Serial.println("write highscore");
-  Serial.print("Game = ");
-  Serial.println(s);
-  int tmpAdr = 0;
-  if (s == "snake") {
-    tmpAdr = first_snake_score_adress;
-    while (EEPROM.read(tmpAdr) != 0 && tmpAdr <= last_snake_score_adress) {
-      tmpAdr++;
-    }
-    EEPROM.write(tmpAdr, highScore_snake);
-  }
-  else if (s == "tetris") {
-    tmpAdr = first_tetris_score_adress;
-    while (EEPROM.read(tmpAdr) != 0 && tmpAdr <= last_tetris_score_adress) {
-      tmpAdr++;
-      delay(100);
-    }
-    EEPROM.write(tmpAdr, highScore_tetris);
-  }
-}
-
 void deathAnimation()
 {
   delay(100);
@@ -353,6 +296,17 @@ void screen_transition_loop(void)
 
 }
 
+void new_hs_player(int score, struct hs_player &player)
+{
+  player.score = score;
+  //input prompt
+  player.name[0] = 'q';
+  player.name[1] = 'q';
+  player.name[2] = 'q';
+  player.name[3] = 'q';
+  
+}
+
 void setup()
 {
   delay(1000);
@@ -361,8 +315,9 @@ void setup()
 
   x = w / 2;
   y = h / 2;
-  highScore_snake = readHighScore("snake");
-  highScore_tetris = readHighScore("tetris");
+  // Update score board from EEPROM
+  read_high_score_board('t', curr_tetris_board);
+  read_high_score_board('s', curr_snake_board);
   choice  = "";
 
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);

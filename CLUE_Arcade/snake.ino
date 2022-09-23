@@ -148,7 +148,7 @@ void draw() {
     i++;
     tmp = tmp >> 1;
   }
-  tmp = highScore_snake;
+  tmp = read_high_score_top('s');
   i = 0;
   while (tmp > 0) {
     if (tmp & 1) {
@@ -180,15 +180,12 @@ void snake_loop()
   }
 
   if (GameOver == true) {
-    if (score > highScore_snake) {
-      Serial.print("old highscore = ");
-      Serial.println(highScore_snake);
-      highScore_snake = score;
-      Serial.print("new highscore = ");
-      Serial.println(highScore_snake);
-      writeHighScore("snake");
+    if (score >  read_high_score_low('t')) {
+      struct hs_player player;
+      new_hs_player(score, player);
+      update_score_board('s', player, curr_snake_board);
       hsAnimation();
-      unsigned int tmp = highScore_snake;
+      unsigned int tmp = read_high_score_top('s'); // WHAT IS THIS FOR?
       int i = 0;
       while (tmp > 0) {
         if (tmp & 1) {

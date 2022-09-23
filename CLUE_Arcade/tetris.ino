@@ -199,7 +199,7 @@ void render(void)
   }
 #ifndef POSIX_BUILD
   unsigned int tmp_score = score;
-  unsigned int tmp_hs = highScore_tetris;
+  unsigned int tmp_hs = read_high_score_top('t');
   unsigned int tmp_level = level;
   unsigned int tmp_combo = combo;
   //orange ff7300
@@ -362,9 +362,10 @@ void tetris_setup()
 void tetris_loop() {
   long int current_time;
   if (GameOver_tetris) {
-    if (score > highScore_tetris) {
-      highScore_tetris = score;
-      writeHighScore("tetris");
+    if (score >  read_high_score_low('t')) {
+      struct hs_player player;
+      new_hs_player(score, player);
+      update_score_board('t', player, curr_tetris_board);
       hsAnimation();
     }
     deathAnimation();
