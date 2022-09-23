@@ -5,9 +5,24 @@
 
 #include "src/Mem_high_score.h"
 
+void print_hs_mem(String game_choice)
+{
+  struct hs_board board;
+  read_high_score_board(game_choice, board);
+
+  for (int i = 0; i<10; i++) {
+    Serial.print(board.scores[i].name[0]);
+    Serial.print(board.scores[i].name[1]);
+    Serial.print(board.scores[i].name[2]);
+    Serial.print(board.scores[i].name[3]);
+    Serial.print("\t");
+    Serial.println(board.scores[i].score);
+  }
+}
+
 void print_all_memory()
 {
-  for (int i=0; i<80; i++) {
+  for (int i=0; i<1024; i++) {
     Serial.println(EEPROM.read(i));
   }
 }
@@ -23,9 +38,11 @@ void clear_high_score(String game_choice) {
   struct hs_board curr_board;
   int start_adr;
   //clear_all_memory();
-  if (game_choice == "t") {
+  if (game_choice == "t")
     start_adr = TETRIS_ADR_START;
-  }
+  else if(game_choice == 's')
+    start_adr = SNAKE_ADR_START;
+
   EEPROM.put(start_adr, curr_board);
 }
 
@@ -88,10 +105,14 @@ int read_high_score_low(String game_choice)
 {
   struct hs_player low_player;
   struct hs_board curr_board;
+
   read_high_score_board(game_choice, curr_board);
   for (int i=0; i<10; i++) {
     if (curr_board.scores[i].score == 0) {
-      low_player = curr_board.scores[i-1];
+      if (i != 0) 
+        low_player = curr_board.scores[i-1];
+      else
+        low_player.score = 0;
     }
     else {
       low_player = curr_board.scores[9];

@@ -319,7 +319,7 @@ void setup()
   read_high_score_board('t', curr_tetris_board);
   read_high_score_board('s', curr_snake_board);
   choice  = "";
-
+  
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
   GameOver = true;
