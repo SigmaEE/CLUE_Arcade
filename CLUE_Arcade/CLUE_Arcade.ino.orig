@@ -4,6 +4,8 @@
 #include "src/CLUE_Arcade.h"
 #include "src/Mem_high_score.h"
 
+
+extern char ** numbers[];
 #define LED_PIN  3
 
 // fastled takes 53/52 milliseconds to render!
@@ -264,12 +266,47 @@ struct arcade_screen letter_input_screen = {
 };
 
 struct arcade_screen setting_screen = {
-  .name = (char*)"SETING",
+  .name = (char*)"CONFIG",
   .loop_fn = &setting_screen_loop,
   .setup_fn = &setting_screen_setup
 };
 
+struct hs_board tetris_highscores;
 
+void hiscore_screen_setup()
+{
+  read_high_score_board("t", tetris_highscores);
+<<<<<<< HEAD
+=======
+
+>>>>>>> bbdb02f (temp)
+}
+
+void hiscore_screen_loop()
+{
+  tetris_highscores.scores[0].name[3] = '\0';
+
+  clearScreen();
+  draw_word(30, 0, tetris_highscores.scores[0].name, 0x999999);
+<<<<<<< HEAD
+  draw_color_xpm(0xffff99, numbers[tetris_highscores.scores[0].score % 10],15,0);
+  FastLED.show();
+  delay(100);
+=======
+  //draw_color_xpm(0xffff99, numbers[tmp_score % 10],15,0);
+>>>>>>> bbdb02f (temp)
+  //draw_word(hs_board[0].score % , 30, 0, 0x999999);
+}
+
+struct arcade_screen hiscore_screen = {
+  .name = (char*)"HISCORE",
+  .loop_fn = &hiscore_screen_loop,
+  .setup_fn = &hiscore_screen_setup
+};
+<<<<<<< HEAD
+
+=======
+>>>>>>> bbdb02f (temp)
 struct arcade_screen current_screen;
 struct arcade_screen previous_screen;
 int screen_transition = 0;
@@ -286,44 +323,6 @@ void switch_screen(struct arcade_screen * screen)
   current_screen.setup_fn();
 }
 
-extern char ** numbers[];
-void hiscore_screen_loop(void)
-{
-
-  int action;
-  clearScreen();
-  leds[0] = 0xFFFFFF;
-  int green = 0x0caf00;
-  for (int i = 0; i < 9; i++) {
-    hs_player p = curr_tetris_board.scores[i];
-    int tmp_hs = p.score;
-    p.name[3] = '\0';
-    draw_color_xpm(green, numbers[tmp_hs % 10],3,i * 6);
-    draw_color_xpm(green, numbers[(tmp_hs/10) % 10],7,i * 6);
-    draw_color_xpm(green, numbers[(tmp_hs/100) % 10],11,i * 6);
-    draw_color_xpm(green, numbers[(tmp_hs/1000) % 10],15,i * 6);
-    //draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],19,0);
-    draw_word(29, i * 6, p.name, 0xFF8040);
-  }
-  FastLED.show();
-
-  action = check_input();
-  if (action & ACT_U || action & ACT_D) {
-	  switch_screen(&home_screen);
-  }
-  delay(100);
-}
-
-void hiscore_screen_setup(void)
-{
-}
-
-struct arcade_screen hiscore_screen = {
-  .name = (char*)"HISCOR",
-  .loop_fn = &hiscore_screen_loop,
-  .setup_fn = &hiscore_screen_setup
-};
-
 void screen_transition_loop(void)
 {
   if (screen_transition) {
@@ -335,22 +334,15 @@ void screen_transition_loop(void)
 
 }
 
-int letter_input_done = 0;
-char letter_input_buffer[10] = "";
-
 void new_hs_player(int score, struct hs_player &player)
 {
-  letter_input_done = 0;
-  input_screen_setup();
-  while (letter_input_done == 0) {
-    input_screen_loop();
-  }
   player.score = score;
   //input prompt
-  player.name[0] = letter_input_buffer[0];
-  player.name[1] = letter_input_buffer[1];
-  player.name[2] = letter_input_buffer[2];
-  player.name[3] = '\0';
+  player.name[0] = 'q';
+  player.name[1] = 'q';
+  player.name[2] = 'q';
+  player.name[3] = 'q';
+  
 }
 
 void setup()

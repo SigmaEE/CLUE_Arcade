@@ -58,6 +58,12 @@ void input_screen_loop()
       }
     } else if (letter_cur_char == INPUT_MAX_LETTERS + 1) {
       // DONE!
+      letter_input_done = 1;
+      letter_input_buffer[0] = letter_input[0];
+      letter_input_buffer[1] = letter_input[1];
+      letter_input_buffer[2] = letter_input[2];
+      letter_input_buffer[3] = '\0';
+
       switch_screen(&home_screen);
     }
   }

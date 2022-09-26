@@ -32,6 +32,8 @@ int arrow_up_start_pos_row = arrow_down_start_pos_row - (Letter_size_row - 1) - 
 
 void draw_letter(int x, int y, char let, uint32_t color)
 {
+  if ('q' == let ) let = 'A';
+  if (let < 'A' || let > '\\') let = '\\';
   int letter[Letter_size_row][Letter_size_col];
   memcpy(letter, All_letters[let - 'A'], Letter_size_row * Letter_size_col * sizeof(int));
   for (int col = 0; col < Letter_size_col; col++) {
@@ -124,14 +126,16 @@ void home_screen_setup()
 struct menu_item {
   char * text;
   uint32_t color;
-  struct arcade_screen * screen;
+  struct arcade_screen * screen_1;
+  struct arcade_screen * screen_2;
 };
 
 struct menu_item home_menu[] = {
-  { (char*)"SNAKE", CRGB::Yellow, &snake_screen },
-  { (char*)"TETRIS", CRGB::Red, &tetris_screen },
-  { (char*)"CONFIG", CRGB::Green, &setting_screen },
-  { (char*)"TEST", CRGB::Purple, &letter_input_screen }
+  { (char*)"SNAKE", CRGB::Yellow, &snake_screen, &snake_screen },
+  { (char*)"TETRIS", CRGB::Red, &tetris_screen, &hiscore_screen },
+  { (char*)"CONFIG", CRGB::Green, &setting_screen, &home_screen },
+  { (char*)"TEST", CRGB::Purple, &letter_input_screen, &home_screen },
+  { (char*)"HISCORE", CRGB::Cyan, &hiscore_screen, &hiscore_screen }
 };
 
 void draw_menu(struct menu_item * menu, int nitems, int x, int y)
@@ -183,7 +187,12 @@ void home_screen_loop()
     if (action & ACT_R) {
       selection = true;
       delay(1);
-      switch_screen(home_menu[menu_pos].screen);
+      switch_screen(home_menu[menu_pos].screen_1);
+    }
+    if (action & ACT_L) {
+      selection = true;
+      delay(1);
+      switch_screen(home_menu[menu_pos].screen_2);
     }
     selection = false;
     GameOver = false;

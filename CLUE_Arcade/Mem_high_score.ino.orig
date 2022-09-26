@@ -3,6 +3,7 @@
 #define TETRIS_ADR_START 100
 #define TETRIS_ADR_END 179
 
+<<<<<<< HEAD
 #include "src/Mem_high_score.h"
 
 void print_hs_mem(String game_choice)
@@ -19,6 +20,8 @@ void print_hs_mem(String game_choice)
     Serial.println(board.scores[i].score);
   }
 }
+=======
+>>>>>>> d1b121b (Begin moving header-stuff into headers)
 
 void print_all_memory()
 {
@@ -40,7 +43,7 @@ void clear_high_score(String game_choice) {
   //clear_all_memory();
   if (game_choice == "t")
     start_adr = TETRIS_ADR_START;
-  else if(game_choice == "s")
+  else if(game_choice == 's')
     start_adr = SNAKE_ADR_START;
 
   EEPROM.put(start_adr, curr_board);

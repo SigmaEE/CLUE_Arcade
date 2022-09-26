@@ -1,0 +1,40 @@
+#ifndef _SRC_CLUE_ARCADE_H
+#define _SRC_CLUE_ARCADE_H
+
+<<<<<<< HEAD
+=======
+
+struct hs_player {
+  char name[4]={'-','-','-','-'};
+  int score=0;
+};
+
+struct hs_board {
+  struct hs_player scores[10];
+};
+
+>>>>>>> d1b121b (Begin moving header-stuff into headers)
+struct arcade_screen {
+  char * name;
+  void (*loop_fn)(void);
+  void (*setup_fn)(void);
+} ;
+
+<<<<<<< HEAD
+void draw_word(int x, int y, char * str, uint32_t);
+
+=======
+void clear_high_score(String game_choice);
+void re_arrange_board(int position, struct hs_board &board);
+void read_high_score_board(String game_choice, struct hs_board &board);
+void write_high_score(String game_choice, struct hs_player &player);
+void read_high_score_top(String game_choice, struct hs_player &top_player);
+void read_high_score_low(String game_choice, struct hs_player &top_player);
+
+void clear_all_memory();
+void print_all_memory();
+void print_all_high_score(String game_choice);
+
+void draw_word(int x, int y, char * str, uint32_t);
+>>>>>>> d1b121b (Begin moving header-stuff into headers)
+#endif

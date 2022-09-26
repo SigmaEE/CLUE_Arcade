@@ -148,7 +148,7 @@ void draw() {
     i++;
     tmp = tmp >> 1;
   }
-  tmp = read_high_score_top('s');
+  tmp = read_high_score_top("s");
   i = 0;
   while (tmp > 0) {
     if (tmp & 1) {
@@ -180,12 +180,12 @@ void snake_loop()
   }
 
   if (GameOver == true) {
-    if (score >  read_high_score_low('t')) {
+    if (score >  read_high_score_low("t")) {
       struct hs_player player;
       new_hs_player(score, player);
-      write_high_score('s', player, curr_snake_board);
+      write_high_score("s", player, curr_snake_board);
       hsAnimation();
-      unsigned int tmp = read_high_score_top('s'); // WHAT IS THIS FOR?
+      unsigned int tmp = read_high_score_top("s"); // WHAT IS THIS FOR?
       int i = 0;
       while (tmp > 0) {
         if (tmp & 1) {
