@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
 			}
 
 			if (event.type == KeyPress) {
-				printf("Keycode %d\n", event.xkey.keycode);
+				//printf("Keycode %d\n", event.xkey.keycode);
 				if (event.xkey.keycode == 53) { // 'q'
 					exit(0);;
 				}
@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
 				}
 			}
 			if (event.type == KeyRelease) {
-				printf("keyrelease\n");
+				//printf("keyrelease\n");
 				if (event.xkey.keycode == 111) {
 					joystickY = 0;
 				}
@@ -335,6 +335,11 @@ int main(int argc, char *argv[])
 			if (event.type == ButtonPress) {
 				int psize = get_psize();
 				printf("buttonpress %d\n", event.xbutton.button);
+				/*
+				if (event.xbutton.button == 1) { // mouse button 1
+					exit(0);
+				}
+				*/
 				if (event.xbutton.button == 4 && psize < PSIZE_MAX) { // scrollwheel up
 					psize++;
 				} else if (event.xbutton.button == 5 && psize > PSIZE_MIN) { // scrollwheel down

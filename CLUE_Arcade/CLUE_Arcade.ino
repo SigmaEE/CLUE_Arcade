@@ -102,11 +102,11 @@ int check_input()
 {
   int action = ACT_NONE;
 
-  static long int current_time;
-  static long int last_up = 0;
-  static long int last_down = 0;
-  static long int last_left = 0;
-  static long int last_right = 0;
+  static long unsigned int current_time;
+  static long unsigned int last_up = 0;
+  static long unsigned int last_down = 0;
+  static long unsigned int last_left = 0;
+  static long unsigned int last_right = 0;
 
   int xPotVal = analogRead(xPotPin);
   int yPotVal = analogRead(yPotPin);
