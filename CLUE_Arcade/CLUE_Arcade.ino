@@ -100,7 +100,22 @@ int get_filtered_input(struct input_filter * filter)
 
 int check_input()
 {
+
+  for (int i = 6; i <= 11; i++) {
+    Serial.print(i);
+    Serial.print(":");
+    Serial.print(digitalRead(i));
+    Serial.print(" ");
+  }
+  for (int i = 14; i <= 19; i++) {
+    Serial.print(i);
+    Serial.print(":");
+    Serial.print(digitalRead(i));
+    Serial.print(" ");
+  }
+  Serial.println("");
   int action = ACT_NONE;
+  return action;
 
   static long unsigned int current_time;
   static long unsigned int last_up = 0;
@@ -358,6 +373,20 @@ void setup()
   delay(1000);
   Serial1.begin(9600);
   Serial1.println("Setting up");
+
+  pinMode(6, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
+  pinMode(8, INPUT_PULLUP);
+  pinMode(9, INPUT_PULLUP);
+  pinMode(10, INPUT_PULLUP);
+  pinMode(11, INPUT_PULLUP);
+
+  pinMode(14, INPUT_PULLUP);
+  pinMode(15, INPUT_PULLUP);
+  pinMode(16, INPUT_PULLUP);
+  pinMode(17, INPUT_PULLUP);
+  pinMode(18, INPUT_PULLUP);
+  pinMode(19, INPUT_PULLUP);
 
   x = w / 2;
   y = h / 2;
