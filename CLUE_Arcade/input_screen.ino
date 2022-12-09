@@ -25,7 +25,8 @@ int get_cursor_color(void)
 
 void input_screen_loop()
 {
-
+  int action = check_joystick_input();
+  
   clearScreen();
   for (int y = 25; y < 35; y++) {
     for (int x = 0; x < 25; x++)  {
@@ -41,8 +42,7 @@ void input_screen_loop()
   draw_word(25 - 5 * (INPUT_MAX_LETTERS + 1), 25, (char*)"\\", 0x00ff00);
   FastLED.show();
 
-  int action = check_input();
-  if (action & ACT_D) {
+  if (action & ACT_D_P1 || action & ACT_D_P2) {
     if (letter_cur_char < INPUT_MAX_LETTERS) {
       letter_input[letter_cur_char]++;
       if (letter_input[letter_cur_char] > 'V') {
@@ -50,7 +50,7 @@ void input_screen_loop()
       }
     }
   }
-  if (action & ACT_U) {
+  if (action & ACT_U_P1 || action & ACT_U_P2 ) {
     if (letter_cur_char < INPUT_MAX_LETTERS) {
       letter_input[letter_cur_char]--;
       if (letter_input[letter_cur_char] < 'A') {
@@ -67,13 +67,13 @@ void input_screen_loop()
       switch_screen(&home_screen);
     }
   }
-  if (action & ACT_L) {
+  if (action & ACT_L_P1 || action & ACT_L_P2) {
     letter_cur_char--;
     if (letter_cur_char < 0) {
       letter_cur_char = 0;
     }
   }
-  if (action & ACT_R) {
+  if (action & ACT_R_P1 || action & ACT_R_P1) {
     letter_cur_char++;
     if (letter_cur_char > (INPUT_MAX_LETTERS + 1)) {
       letter_cur_char = 0;

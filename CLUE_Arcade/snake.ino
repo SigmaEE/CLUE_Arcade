@@ -5,25 +5,38 @@ int speed_delay = 1000;
 
 // 1,2,3,4 down,left,up,right
 int dir = ACT_L;
-
+int snake_action;
 int tailX[600];
 int tailY[600];
 int nTail = 3;
 
 void inPut() {
-  int xPotVal = analogRead(xPotPin);
-  int yPotVal = analogRead(yPotPin);
+  snake_action = check_joystick_input();
 
-  if ( xPotVal < 400) {
-    dir = ACT_L;
-  } else if (xPotVal > 600) {
-    dir = ACT_R;
+  if (active_player == 1){
+    if (snake_action & ACT_L_P1){
+      dir = ACT_L;
+    } else if (snake_action & ACT_R_P1) {
+      dir = ACT_R;
+    } else if (snake_action & ACT_D_P1) {
+      dir = ACT_D;
+    } else if (snake_action & ACT_U_P1) {
+      dir = ACT_U;
+    }
   }
-  if (yPotVal < 400) {
-    dir = ACT_D;
-  } else if (yPotVal > 600) {
-    dir = ACT_U;
+  else{
+    if (snake_action & ACT_L_P2){
+      dir = ACT_L;
+    } else if (snake_action & ACT_R_P2) {
+      dir = ACT_R;
+    } else if (snake_action & ACT_D_P2) {
+      dir = ACT_D;
+    } else if (snake_action & ACT_U_P2) {
+      dir = ACT_U;
+    }
   }
+
+
 }
 
 void fruitAnimation() {

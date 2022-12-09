@@ -377,7 +377,7 @@ void tetris_loop() {
     switch_screen(&home_screen);
     return;
   }
-  int action = check_input();
+  int action = check_joystick_input();
   current_time = millis();
 
   if (current_time - last_tick > speed_delay) {

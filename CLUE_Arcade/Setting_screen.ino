@@ -29,7 +29,6 @@ void setting_screen_setup()
 }
 
 void setting_selection();
-int action;
 //void draw_word(int x, int y, char * str, CRGB::HTMLColorCode color);
 void draw_word(int x, int y, char * str, uint32_t);
 
@@ -55,15 +54,16 @@ void setting_screen_loop()
 }
 
 void setting_selection() {
-  action = check_input();
+  int action;
+  action = check_joystick_input();
   if (setting_selection == false) {
-    action = check_input();
+    action = check_joystick_input();
 
     while (action == ACT_NONE) { //home screen stays until up or down input on joystick
-      action = check_input();
+      action = check_joystick_input();
       delay(1);
     }
-    if (action & ACT_U) {
+    if (action & ACT_U_P1 || action & ACT_U_P2) {
       if (scroll_move_setting > 0) {
         scroll_move_setting -= (Letter_size_row + word_margin - 1);
 
@@ -71,7 +71,7 @@ void setting_selection() {
         Serial.println("up");
       }
     }
-    if (action & ACT_D) {
+    if (action & ACT_D_P1 || action & ACT_D_P2) {
       if (scroll_move_setting < 1 * (Letter_size_row + word_margin - 1)) {
         scroll_move_setting += (Letter_size_row + word_margin - 1);
 
@@ -79,7 +79,7 @@ void setting_selection() {
         Serial.println(action);
       }
     }
-    if (action & ACT_R) {
+    if (action & ACT_R_P1 || action & ACT_R_P2 ) {
       Serial.println("right");
       Serial.println("action is: ");
       Serial.println(action);
@@ -105,23 +105,20 @@ void setting_selection() {
 
 void bright_setting() {
   Serial.print("Bright setting");
-  while (action == ACT_NONE || action == ACT_R || action == ACT_L) { //home screen stays until up or down input on joystick
-    action = check_input();
-    if (action & ACT_R){
+  int action;
+  while (1) { //home screen stays until up or down input on joystick
+    action = check_joystick_input();
+    if (action & ACT_R_P1 || action & ACT_R_P2){
       BRIGHTNESS += 10;
-      Serial.print("brightness +");
-      Serial.print(BRIGHTNESS);
       FastLED.setBrightness( BRIGHTNESS );
       FastLED.show();
     }
-    else if (action & ACT_L){
+    else if (action & ACT_L_P1 || action & ACT_L_P2){
       BRIGHTNESS -= 10;
-      Serial.print("brightness -");
-      Serial.print(BRIGHTNESS);
       FastLED.setBrightness( BRIGHTNESS );
       FastLED.show();
     }
-    else if(action & ACT_U || action &  ACT_D){
+    else if(action & ACT_U_P1 || action &  ACT_D_P2){
       GameOver = true;
       switch_screen(&home_screen);
       break;
