@@ -136,7 +136,7 @@ struct menu_item home_menu[] = {
   { (char*)"SNAKE", CRGB::Yellow, &snake_screen, &hiscore_screen },
   { (char*)"TETRIS", CRGB::Red, &tetris_screen, &hiscore_screen },
   { (char*)"CONFIG", CRGB::Green, &setting_screen, &home_screen },
-  { (char*)"TEST", CRGB::Purple, &letter_input_screen, &home_screen },
+  //{ (char*)"TEST", CRGB::Purple, &letter_input_screen, &home_screen },
   { (char*)"HISCORE", CRGB::Cyan, &hiscore_screen, &hiscore_screen }
 };
 

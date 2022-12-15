@@ -73,7 +73,7 @@ void input_screen_loop()
       letter_cur_char = 0;
     }
   }
-  if (action & ACT_R_P1 || action & ACT_R_P1) {
+  if (action & ACT_R_P1 || action & ACT_R_P2) {
     letter_cur_char++;
     if (letter_cur_char > (INPUT_MAX_LETTERS + 1)) {
       letter_cur_char = 0;
