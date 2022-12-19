@@ -14,7 +14,7 @@ struct piece {
   int origin_x;
   int origin_y;
   int rotation;
-  int type;
+  int type = 10;
   int squares[PHEIGHT][PWIDTH];
 };
 int combo = 1;
@@ -29,13 +29,16 @@ long int last_tick;
 
 struct piece active_piece;
 struct piece next_piece;
+struct piece hold_piece;
+bool ok_to_hold = true;
+bool holding_piece = false;
 
 #define PTYPES 7
 char piece_shapes[PTYPES][PHEIGHT][PWIDTH * 4 + 1] = {
-  { " #       #      ",
-    " #  #### #  ####",
-    " #       #      ",
-    " #       #      "
+  { "     #       #  ",
+    "#### #  #### #  ",
+    "     #       #  ",
+    "     #       #  "
   },
 
   { " ##  ##  ##  ## ",
@@ -114,6 +117,18 @@ void rotate_piece(struct piece * p, int steps)
   }
 }
 
+void start_piece(struct piece * new_p)
+{
+  struct piece p;
+  p.origin_x = 3;
+  p.origin_y = 0;
+  p.rotation = 0;
+  p.type = analogRead(RANDOM_PIN) % PTYPES;
+  get_shape(&p, p.type, p.rotation);
+  *new_p = next_piece;
+  next_piece = p;
+}
+
 void new_piece(struct piece * new_p)
 {
   struct piece p;
@@ -124,6 +139,25 @@ void new_piece(struct piece * new_p)
   get_shape(&p, p.type, p.rotation);
   *new_p = next_piece;
   next_piece = p;
+}
+
+void hold_piece_f(){
+  holding_piece = true;
+  if (ok_to_hold){
+    struct piece temp_piece = active_piece;
+    if (hold_piece.type == 10){
+      active_piece = next_piece;
+    }
+    else{
+      active_piece = hold_piece;  
+    }
+    hold_piece = temp_piece;
+    hold_piece.rotation = 0;
+    get_shape(&hold_piece, hold_piece.type, hold_piece.rotation);
+    active_piece.origin_x = 3;
+    active_piece.origin_y = 0;
+  }
+  ok_to_hold = false;
 }
 
 void print_piece(struct piece * p)
@@ -206,19 +240,19 @@ void render(void)
 //dark green 0caf00
   int green = 0x0caf00;
   int orange = 0xff7300;
-  draw_color_xpm(orange, numbers[tmp_score % 10],3,6);
-  draw_color_xpm(orange, numbers[(tmp_score/10) % 10],7,6);
-  draw_color_xpm(orange, numbers[(tmp_score/100) % 10],11,6);
-  draw_color_xpm(orange, numbers[(tmp_score/1000) % 10],15,6);
-  draw_color_xpm(orange, numbers[(tmp_score/10000) % 10],19,6);
+  draw_color_xpm(orange, numbers[tmp_score % 10],6,6);
+  draw_color_xpm(orange, numbers[(tmp_score/10) % 10],10,6);
+  draw_color_xpm(orange, numbers[(tmp_score/100) % 10],14,6);
+  draw_color_xpm(orange, numbers[(tmp_score/1000) % 10],18,6);
+  draw_color_xpm(orange, numbers[(tmp_score/10000) % 10],22,6);
+  draw_color_xpm(orange, numbers[(tmp_score/100000) % 10],26,6);
 
-
-
-  draw_color_xpm(green, numbers[tmp_hs % 10],3,0);
-  draw_color_xpm(green, numbers[(tmp_hs/10) % 10],7,0);
-  draw_color_xpm(green, numbers[(tmp_hs/100) % 10],11,0);
-  draw_color_xpm(green, numbers[(tmp_hs/1000) % 10],15,0);
-  draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],19,0);
+  draw_color_xpm(green, numbers[tmp_hs % 10],6,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10) % 10],10,0);
+  draw_color_xpm(green, numbers[(tmp_hs/100) % 10],14,0);
+  draw_color_xpm(green, numbers[(tmp_hs/1000) % 10],18,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],22,0);
+  draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],26,0);
 
   draw_color_xpm(orange, numbers[tmp_level % 10], 29, 53);
   draw_color_xpm(orange, numbers[(tmp_level/10) % 10], 29, 47);
@@ -228,24 +262,43 @@ void render(void)
   // draw next piece
   for (int y = 0; y < PHEIGHT; ++y) {
     for (int x = 0; x < PWIDTH; ++x) {
-      int field_val = next_piece.squares[y][x];
+      int field_val_next = next_piece.squares[y][x];
+      int field_val_hold = hold_piece.squares[y][x];
       if (next_piece.squares[y][x] != 0) {
-        CRGB color;
-        switch (field_val) {
-          case 0: color = CRGB::Black; break;
-          case 1: color = CRGB::Red; break;
-          case 2: color = CRGB::Blue; break;
-          case 3: color = CRGB::Yellow; break;
-          case 4: color = CRGB::Purple; break;
-          case 5: color = CRGB::ForestGreen; break;
-          case 6: color = CRGB::Green; break;
-          case 7: color = CRGB::Brown; break;
-          case 8: color = CRGB::Grey; break;
+        CRGB color_next;
+        switch (field_val_next) {
+          case 0: color_next = CRGB::Black; break;
+          case 1: color_next = CRGB::Red; break;
+          case 2: color_next = CRGB::Blue; break;
+          case 3: color_next = CRGB::Yellow; break;
+          case 4: color_next = CRGB::Purple; break;
+          case 5: color_next = CRGB::ForestGreen; break;
+          case 6: color_next = CRGB::Green; break;
+          case 7: color_next = CRGB::Brown; break;
+          case 8: color_next = CRGB::Grey; break;
         }
-        leds[XY(27 - x * 2, 1 + y * 2)]     = color;
-        leds[XY(27 - x * 2, 1 + y * 2 + 1)] = color;
-        leds[XY(26 - x * 2, 1 + y * 2)]     = color;
-        leds[XY(26 - x * 2, 1 + y * 2 + 1)] = color;
+        leds[XY(8 - x * 2, 12 + y * 2)]     = color_next;
+        leds[XY(8 - x * 2, 12 + y * 2 + 1)] = color_next;
+        leds[XY(7 - x * 2, 12 + y * 2)]     = color_next;
+        leds[XY(7 - x * 2, 12 + y * 2 + 1)] = color_next;
+      }
+      if (hold_piece.squares[y][x] != 0 && holding_piece) {
+        CRGB color_hold;
+        switch (field_val_hold) {
+          case 0: color_hold = CRGB::Black; break;
+          case 1: color_hold = CRGB::Red; break;
+          case 2: color_hold = CRGB::Blue; break;
+          case 3: color_hold = CRGB::Yellow; break;
+          case 4: color_hold = CRGB::Purple; break;
+          case 5: color_hold = CRGB::ForestGreen; break;
+          case 6: color_hold = CRGB::Green; break;
+          case 7: color_hold = CRGB::Brown; break;
+          case 8: color_hold = CRGB::Grey; break;
+        }
+        leds[XY(27 - x * 2, 12 + y * 2)]     = color_hold;
+        leds[XY(27 - x * 2, 12 + y * 2 + 1)] = color_hold;
+        leds[XY(26 - x * 2, 12 + y * 2)]     = color_hold;
+        leds[XY(26 - x * 2, 12 + y * 2 + 1)] = color_hold;
       }
     }
   }
@@ -341,6 +394,9 @@ int try_move_piece(struct piece * p, int dy, int dx)
 
 void tetris_setup()
 {
+  struct piece temp_hold_piece;
+  hold_piece = temp_hold_piece;
+  
   for (int y = 0; y < ROWS; ++y) {
     // printf("\e[0m%-3d |", y);
     for (int x = 0; x < COLUMNS; ++x) {
@@ -352,8 +408,8 @@ void tetris_setup()
   level = 0;
   speed_delay = 1000;
   last_tick = millis();
-  new_piece(&active_piece);
-  new_piece(&active_piece);
+  start_piece(&active_piece);
+  start_piece(&active_piece);
   render();
   GameOver = false;
   GameOver_tetris = false;
@@ -368,8 +424,8 @@ void tetris_loop() {
       write_high_score("t", player, curr_tetris_board);
       hsAnimation();
     }
+    holding_piece = false;
     deathAnimation();
-
     GameOver = true;
     last_tick = millis();
     new_piece(&active_piece);
@@ -385,7 +441,11 @@ void tetris_loop() {
     }
 
   if (active_player == 1){
-    if (action & ACT_L_P1){
+    if (action & ACT_B1_P1) {
+      hold_piece_f();
+    } else if (action & ACT_B2_P1) {
+      //Some cool function
+    } else if (action & ACT_L_P1){
       action = ACT_L;
     } else if (action & ACT_R_P1) {
       action = ACT_R;
@@ -393,10 +453,15 @@ void tetris_loop() {
       action = ACT_D;
     } else if (action & ACT_U_P1) {
       action = ACT_U;
-    }
+    } 
+    
   }
   else{
-    if (action & ACT_L_P2){
+    if (action & ACT_B1_P2) {
+      hold_piece_f();
+    } else if (action & ACT_B2_P2) {
+      //Some cool function
+    } else if (action & ACT_L_P2){
       action = ACT_L;
     } else if (action & ACT_R_P2) {
       action = ACT_R;
@@ -404,7 +469,7 @@ void tetris_loop() {
       action = ACT_D;
     } else if (action & ACT_U_P2) {
       action = ACT_U;
-    }
+    } 
   }
 
   if (action == ACT_NONE) {
@@ -426,6 +491,7 @@ void tetris_loop() {
     if (!try_move_piece(&active_piece, 1, 0)) {
       stick_piece(&active_piece);
       remove_filled_rows();
+      ok_to_hold = true;
       new_piece(&active_piece);
       if (0 == try_move_piece(&active_piece, 0, 0)) {
         // game over!
