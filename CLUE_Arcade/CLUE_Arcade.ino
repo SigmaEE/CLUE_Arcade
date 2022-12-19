@@ -66,6 +66,8 @@ const bool    kMatrixSerpentineLayout = true;
 #define player2B1 16
 #define player2B2 19
 
+#define RANDOM_PIN A6
+
 const int w = kMatrixWidth;
 const int h = kMatrixHeight;
 const int start_h = 16;
@@ -293,7 +295,7 @@ void hiscore_screen_loop(void)
     draw_color_xpm(green, numbers[(tmp_hs/100) % 10],11,i * 6);
     draw_color_xpm(green, numbers[(tmp_hs/1000) % 10],15,i * 6);
     //draw_color_xpm(green, numbers[(tmp_hs/10000) % 10],19,0);
-    draw_word(29, i * 6, p.name, 0xFF8040);
+    draw_word(29, i * 6, p.name, 0xff7300);
   }
   FastLED.show();
 
@@ -363,6 +365,8 @@ void setup()
   pinMode(player2Right, INPUT_PULLUP);
   pinMode(player2Left, INPUT_PULLUP);
   pinMode(player2Down, INPUT_PULLUP);
+
+  pinMode(RANDOM_PIN, INPUT);
 
   x = w / 2;
   y = h / 2;

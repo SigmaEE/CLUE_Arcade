@@ -109,7 +109,7 @@ int check_joystick_input()
       last_button2[1] = millis(); 
     }
   }
-  Serial.print("action: ");
-  Serial.println(action);
+//  Serial.print("action: ");
+//  Serial.println(action);
   return action;
 }
