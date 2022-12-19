@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #include "src/CLUE_Arcade.h"
 #include "src/Mem_high_score.h"
+#include "src/joystick_input.h"
 
 #define LED_PIN  3
 
@@ -17,12 +18,32 @@ int BRIGHTNESS = 50;
 #define Arrow_size_col 5
 
 #define ACT_NONE 0
+#define ACT_L_P1  (1 << 0)
+#define ACT_R_P1  (1 << 1)
+#define ACT_D_P1  (1 << 2)
+#define ACT_U_P1  (1 << 3)
+#define ACT_B1_P1 (1 << 4)
+#define ACT_B2_P1 (1 << 5)
+#define ACT_RN_P1 (1 << 6)
+#define ACT_Q_P1  (1 << 7)
+
+#define ACT_L_P2  (1 << 8)
+#define ACT_R_P2  (1 << 9)
+#define ACT_D_P2  (1 << 10)
+#define ACT_U_P2  (1 << 11)
+#define ACT_B1_P2 (1 << 12)
+#define ACT_B2_P2 (1 << 13)
+#define ACT_RN_P2 (1 << 14)
+#define ACT_Q_P2  (1 << 15)
+
+// OLD
 #define ACT_L  (1 << 0)
 #define ACT_R  (1 << 1)
 #define ACT_D  (1 << 2)
-#define ACT_U (1 << 3)
-#define ACT_RN (1 << 4)
-#define ACT_Q  (1 << 5)
+#define ACT_U  (1 << 3)
+#define ACT_RN (1 << 6)
+#define ACT_Q  (1 << 7)
+
 
 // Params for width and height
 #define kMatrixWidth (30)
@@ -31,8 +52,19 @@ int BRIGHTNESS = 50;
 // Param for different pixel layouts
 const bool    kMatrixSerpentineLayout = true;
 
-const int xPotPin = A0;
-const int yPotPin = A1;
+#define player1Up 8
+#define player1Right 10
+#define player1Left 9
+#define player1Down 11
+#define player1B1 6
+#define player1B2 7
+
+#define player2Up 15
+#define player2Right 14
+#define player2Left 18
+#define player2Down 17
+#define player2B1 16
+#define player2B2 19
 
 const int w = kMatrixWidth;
 const int h = kMatrixHeight;
@@ -49,7 +81,6 @@ void home_screen_setup();
 void input_screen_loop();
 void input_screen_setup();
 void game_selection();
-int check_input();
 
 #define NUM_LEDS (kMatrixWidth * kMatrixHeight)
 CRGB leds_plus_safety_pixel[ NUM_LEDS + 1];
@@ -96,47 +127,6 @@ int get_filtered_input(struct input_filter * filter)
 {
 
   return 0;
-}
-
-int check_input()
-{
-  int action = ACT_NONE;
-
-  static long unsigned int current_time;
-  static long unsigned int last_up = 0;
-  static long unsigned int last_down = 0;
-  static long unsigned int last_left = 0;
-  static long unsigned int last_right = 0;
-
-  int xPotVal = analogRead(xPotPin);
-  int yPotVal = analogRead(yPotPin);
-
-  current_time = millis();
-
-  if ( xPotVal < 400) {
-    if (current_time - last_left > 100) {
-      action |= ACT_L;
-      last_left = millis();
-    }
-  } else if (xPotVal > 600) {
-    if (current_time - last_right > 100) {
-      action |= ACT_R;
-      last_right = millis();
-    }
-  }
-  if (yPotVal < 400) {
-    if (current_time - last_down > 50) {
-      action |= ACT_D;
-      last_down = millis();
-    }
-  } else if (yPotVal > 600) {
-
-    if (current_time - last_up > 200) {
-      action |= ACT_U;
-      last_up = millis();
-    }
-  }
-  return action;
 }
 
 void clearScreen() {
@@ -307,8 +297,9 @@ void hiscore_screen_loop(void)
   }
   FastLED.show();
 
-  action = check_input();
-  if (action & ACT_U || action & ACT_D) {
+  action = check_joystick_input();
+
+  if (action & ACT_U_P1 || action & ACT_D_P1 || action & ACT_U_P2 || action & ACT_D_P2) {
 	  switch_screen(&home_screen);
   }
   delay(100);
@@ -358,6 +349,20 @@ void setup()
   delay(1000);
   Serial1.begin(9600);
   Serial1.println("Setting up");
+
+  pinMode(player1B1, INPUT_PULLDOWN);
+  pinMode(player1B2, INPUT_PULLDOWN);
+  pinMode(player1Up, INPUT_PULLUP);
+  pinMode(player1Right, INPUT_PULLUP);
+  pinMode(player1Left, INPUT_PULLUP);
+  pinMode(player1Down, INPUT_PULLUP);
+
+  pinMode(player2B1, INPUT_PULLDOWN);
+  pinMode(player2B2, INPUT_PULLDOWN);
+  pinMode(player2Up, INPUT_PULLUP);
+  pinMode(player2Right, INPUT_PULLUP);
+  pinMode(player2Left, INPUT_PULLUP);
+  pinMode(player2Down, INPUT_PULLUP);
 
   x = w / 2;
   y = h / 2;

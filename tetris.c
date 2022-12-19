@@ -26,6 +26,7 @@
 #define ACT_U (1 << 3)
 #define ACT_RN (1 << 4)
 #define ACT_Q  (1 << 5)
+#define ACT_Q  (1 << 5)
 
 // fastled
 typedef struct CRGB {

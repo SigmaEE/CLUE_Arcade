@@ -377,12 +377,34 @@ void tetris_loop() {
     switch_screen(&home_screen);
     return;
   }
-  int action = check_input();
+  int action = check_joystick_input();
   current_time = millis();
+   if (current_time - last_tick > speed_delay) {
+      action |= ACT_D;
+      last_tick = millis();
+    }
 
-  if (current_time - last_tick > speed_delay) {
-    action |= ACT_D;
-    last_tick = millis();
+  if (active_player == 1){
+    if (action & ACT_L_P1){
+      action = ACT_L;
+    } else if (action & ACT_R_P1) {
+      action = ACT_R;
+    } else if (action & ACT_D_P1) {
+      action = ACT_D;
+    } else if (action & ACT_U_P1) {
+      action = ACT_U;
+    }
+  }
+  else{
+    if (action & ACT_L_P2){
+      action = ACT_L;
+    } else if (action & ACT_R_P2) {
+      action = ACT_R;
+    } else if (action & ACT_D_P2) {
+      action = ACT_D;
+    } else if (action & ACT_U_P2) {
+      action = ACT_U;
+    }
   }
 
   if (action == ACT_NONE) {

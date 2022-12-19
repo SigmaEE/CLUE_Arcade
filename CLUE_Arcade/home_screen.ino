@@ -1,8 +1,10 @@
 #include "src/tetris.h"
 #include "src/snake.h"
+#include "src/joystick_input.h"
 
 int scroll_move_home = 0;
 int menu_pos = 0;
+int active_player = 0;
 
 
 int clue_length = 4;
@@ -131,7 +133,7 @@ struct menu_item {
 };
 
 struct menu_item home_menu[] = {
-  { (char*)"SNAKE", CRGB::Yellow, &snake_screen, &snake_screen },
+  { (char*)"SNAKE", CRGB::Yellow, &snake_screen, &hiscore_screen },
   { (char*)"TETRIS", CRGB::Red, &tetris_screen, &hiscore_screen },
   { (char*)"CONFIG", CRGB::Green, &setting_screen, &home_screen },
   { (char*)"TEST", CRGB::Purple, &letter_input_screen, &home_screen },
@@ -150,6 +152,7 @@ void draw_menu(struct menu_item * menu, int nitems, int x, int y)
 
 void home_screen_loop()
 {
+  int action = ACT_NONE;
   GameOver = true;
   choice  = "";
 
@@ -170,30 +173,33 @@ void home_screen_loop()
 
   FastLED.show();
   if (selection == false) {
-    action = check_input();
+    action = check_joystick_input();
     delay(1);
-    if (action & ACT_U) {
+    if ((action & ACT_U_P1) || (action & ACT_U_P2)) {
       if (menu_pos > 0) {
         menu_pos--;
         scroll_move_home -= (Letter_size_row + word_margin - 1);
       }
     }
-    if (action & ACT_D) {
+    if ((action & ACT_D_P1) || (action & ACT_D_P2))  {
       if (menu_pos < (sizeof(home_menu) / sizeof(home_menu[0])) - 1) {
         menu_pos++;
         scroll_move_home += (Letter_size_row + word_margin - 1);
       }
     }
-    if (action & ACT_R) {
+    if ((action & ACT_R_P1) || (action & ACT_R_P2)) {
       selection = true;
       delay(1);
+      if (action & ACT_R_P1) active_player = 1;
+      else active_player = 2;
       switch_screen(home_menu[menu_pos].screen_1);
     }
-    if (action & ACT_L) {
+    if ((action & ACT_L_P1) || (action & ACT_L_P2)) {
       selection = true;
       delay(1);
       switch_screen(home_menu[menu_pos].screen_2);
     }
+    Serial.println(action);
     selection = false;
     GameOver = false;
   }

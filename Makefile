@@ -5,7 +5,7 @@ clean:
 arduino_stub.o: arduino_stub.cpp $(wildcard CLUE_Arcade/*.ino) $(wildcard arduino_stubs/*.h)
 	$(CXX) -Iarduino_stubs -c -o arduino_stub.o arduino_stub.cpp
 
-ino_target: arduino_stub.o
+ino_target:
 	/home/hlofving/Downloads/arduino-1.8.19/arduino-builder -compile -logger=machine -hardware /home/hlofving/Downloads/arduino-1.8.19/hardware -tools /home/hlofving/Downloads/arduino-1.8.19/tools-builder -tools /home/hlofving/Downloads/arduino-1.8.19/hardware/tools/avr -built-in-libraries /home/hlofving/Downloads/arduino-1.8.19/libraries -libraries /home/hlofving/Arduino/libraries -fqbn=teensy:avr:teensy40:usb=serial,speed=600,opt=o2std,keys=en-us -vid-pid=16C0_0483 -ide-version=10819 -build-path /tmp/arduino_build_418244 -warnings=none -build-cache /tmp/arduino_cache_75974 -verbose /home/hlofving/see-gh/CLUE_Arcade/CLUE_Arcade/CLUE_Arcade.ino
 
 flash_arduino:
