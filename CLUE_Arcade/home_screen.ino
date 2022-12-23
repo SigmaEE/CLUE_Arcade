@@ -4,11 +4,12 @@
 
 int scroll_move_home = 0;
 int menu_pos = 0;
-int active_player = 0;
+int scroll_move_snake = 0;
+int snake_menu_pos = 0;
 
 
 int clue_length = 4;
-int clue_start_pos_col = -1 + (kMatrixWidth/2 - 1) + ((Letter_size_col + 1) * (clue_length - 1) + Letter_size_col)/2;
+int clue_start_pos_col =  (kMatrixWidth/2 - 1) + ((Letter_size_col + 1) * (clue_length - 1) + Letter_size_col)/2;
 int clue_start_pos_row = 0;
 
 int arcade_start_pos_col = -1 + (kMatrixWidth - 1);
@@ -133,7 +134,8 @@ struct menu_item {
 };
 
 struct menu_item home_menu[] = {
-  { (char*)"SNAKE", CRGB::Yellow, &snake_screen, &hiscore_screen },
+  //{ (char*)"SNAKE", CRGB::Yellow, &snake_screen, &hiscore_screen },
+  { (char*)"SNAKE", CRGB::Yellow, &snake_options_screen, &hiscore_screen },
   { (char*)"TETRIS", CRGB::Red, &tetris_screen, &hiscore_screen },
   { (char*)"CONFIG", CRGB::Green, &setting_screen, &home_screen },
   //{ (char*)"TEST", CRGB::Purple, &letter_input_screen, &home_screen },
@@ -158,8 +160,8 @@ void home_screen_loop()
 
   clearScreen();
 
-  draw_word(clue_start_pos_col + 1, clue_start_pos_row + 1, (char*)"CLUE", 0x000020);
-  draw_word(arcade_start_pos_col + 1, arcade_start_pos_row  + 1+ 1, (char*)"ARCADE", 0x000020);
+  draw_word(clue_start_pos_col + 1, clue_start_pos_row + 1, (char*)"CLUE", 0x000006);
+  draw_word(arcade_start_pos_col + 1, arcade_start_pos_row  + 1+ 1, (char*)"ARCADE", 0x00006);
   draw_word(clue_start_pos_col, clue_start_pos_row, (char*)"CLUE", 0x0000ff);
   draw_word(arcade_start_pos_col, arcade_start_pos_row + 1, (char*)"ARCADE", 0x0000ff);
 
@@ -199,8 +201,64 @@ void home_screen_loop()
       delay(1);
       switch_screen(home_menu[menu_pos].screen_2);
     }
-    //Serial.println(action);
     selection = false;
     GameOver = false;
   }
+}
+
+/* ------------- SNAKE SETTINGS ------------------*/
+struct menu_item snake_menu[] = {
+  { (char*)"ONE", CRGB::Yellow, &snake_screen, &home_screen },
+  { (char*)"TWO", CRGB::Red, &snake_multi_screen, &home_screen }
+};
+
+void snake_options_setup() {
+  
+}
+
+void snake_options_loop() {
+  int action = ACT_NONE;
+  clearScreen();
+  draw_word(seting_start_pos_col, 0, (char*)"SNAKE", (uint32_t) CRGB::Green);
+  draw_word(seting_start_pos_col, 8, (char*)"GAMERS", (uint32_t) CRGB::Green);
+  select_line(line1_start_pos_col, line1_length, snake_menu_pos * 8 + line1_start_pos_row);
+  select_line(line2_start_pos_col, line2_length, snake_menu_pos * 8 + line2_start_pos_row);
+  draw_menu(snake_menu, sizeof(snake_menu) / sizeof(snake_menu[0]), snake_start_pos_col, snake_start_pos_row);
+  FastLED.show();
+  if (selection == false) {
+    action = check_joystick_input();
+    delay(1);
+    if ((action & ACT_U_P1) || (action & ACT_U_P2)) {
+      if (snake_menu_pos > 0) {
+        snake_menu_pos--;
+        scroll_move_snake -= (Letter_size_row + word_margin - 1);
+      }
+    }
+    if ((action & ACT_D_P1) || (action & ACT_D_P2))  {
+      if (snake_menu_pos < (sizeof(snake_menu) / sizeof(snake_menu[0])) - 1) {
+        snake_menu_pos++;
+        scroll_move_snake += (Letter_size_row + word_margin - 1);
+      }
+    }
+    if ((action & ACT_R_P1) || (action & ACT_R_P2)) {
+      selection = true;
+      delay(1);
+      if (snake_menu_pos == 0){
+        if (action & ACT_R_P1) active_player = 1;
+        else active_player = 2;  
+      }
+      else{
+        number_of_players = 2;
+      }
+      switch_screen(snake_menu[snake_menu_pos].screen_1);
+    }
+    if ((action & ACT_L_P1) || (action & ACT_L_P2)) {
+      selection = true;
+      delay(1);
+      switch_screen(snake_menu[snake_menu_pos].screen_2);
+    }
+    selection = false;
+    GameOver = false;
+  }
+  
 }

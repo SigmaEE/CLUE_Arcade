@@ -22,42 +22,36 @@ int check_joystick_input()
   current_time = millis();
 
   if ( p1Left == 0) {
-    if (current_time - last_left[0] > 100) {
+    if (current_time - last_left[0] > left_delay) {
       action |= ACT_L_P1;
-      Serial.println("p1 LEFT");
       last_left[0] = millis();
     }
   } else if (p1Right == 0) {
-    if (current_time - last_right[0] > 100) {
+    if (current_time - last_right[0] > right_delay) {
       action |= ACT_R_P1;
-      Serial.println("p1 RIGHT");
       last_right[0] = millis();
     }
   }
   if (p1Down == 0) {
-    if (current_time - last_down[0] > 50) {
+    if (current_time - last_down[0] > down_delay) {
       action |= ACT_D_P1;
-      Serial.println("p1 DOWN");
       last_down[0] = millis();
     }
   } else if (p1Up == 0) {
 
-    if (current_time - last_up[0] > 200) {
+    if (current_time - last_up[0] > up_delay) {
       action |= ACT_U_P1;
-      Serial.println("p1 UP");
       last_up[0] = millis();
     }
   }
   if (p1B1 == 1){
-    if (current_time - last_button1[0] > 200){
+    if (current_time - last_button1[0] > b1_delay){
       action |= ACT_B1_P1;
-      Serial.println("p1 Button 1");
       last_button1[0] = millis(); 
     }
   } else if (p1B2 == 1){
-    if (current_time - last_button2[0] > 200){
+    if (current_time - last_button2[0] > b2_delay){
       action |= ACT_B2_P1;
-      Serial.println("p1 Button 2");
       last_button2[0] = millis(); 
     }
   }
@@ -70,46 +64,38 @@ int check_joystick_input()
   int p2B2 = digitalRead(player2B2);
 
   if ( p2Left == 0) {
-    if (current_time - last_left[1] > 100) {
+    if (current_time - last_left[1] > left_delay) {
       action |= ACT_L_P2;
-      Serial.println("p2 LEFT");
       last_left[1] = millis();
     }
   } else if (p2Right == 0) {
-    if (current_time - last_right[1] > 100) {
+    if (current_time - last_right[1] > right_delay) {
       action |= ACT_R_P2;
-      Serial.println("p2 RIGHT");
       last_right[1] = millis();
     }
   }
   if (p2Down == 0) {
-    if (current_time - last_down[1] > 50) {
+    if (current_time - last_down[1] > down_delay) {
       action |= ACT_D_P2;
-      Serial.println("p2 DOWN");
       last_down[1] = millis();
     }
   } else if (p2Up == 0) {
 
-    if (current_time - last_up[1] > 200) {
+    if (current_time - last_up[1] > up_delay) {
       action |= ACT_U_P2;
-      Serial.println("p2 UP");
       last_up[1] = millis();
     }
   }
   if (p2B1 == 1){
-    if (current_time - last_button1[1] > 200){
+    if (current_time - last_button1[1] > b1_delay){
       action |= ACT_B1_P2;
-      Serial.println("p2 Button 1");
       last_button1[1] = millis(); 
     }
   } else if (p2B2 == 1){
-    if (current_time - last_button2[1] > 200){
+    if (current_time - last_button2[1] > b2_delay){
       action |= ACT_B2_P2;
-      Serial.println("p2 Button 2");
       last_button2[1] = millis(); 
     }
   }
-//  Serial.print("action: ");
-//  Serial.println(action);
   return action;
 }
