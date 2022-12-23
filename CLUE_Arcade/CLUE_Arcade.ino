@@ -44,6 +44,13 @@ int BRIGHTNESS = 50;
 #define ACT_RN (1 << 6)
 #define ACT_Q  (1 << 7)
 
+int up_delay = 200;
+int right_delay = 200;
+int down_delay = 200;
+int left_delay = 200;
+int b1_delay = 200;
+int b2_delay = 200;
+
 
 // Params for width and height
 #define kMatrixWidth (30)
@@ -73,6 +80,8 @@ const int h = kMatrixHeight;
 const int start_h = 16;
 const int end_h = h;
 
+int active_player = 0;
+int number_of_players = 0;
 bool GameOver;
 bool selection;
 int x, y;
@@ -256,10 +265,23 @@ struct arcade_screen letter_input_screen = {
 };
 
 struct arcade_screen setting_screen = {
-  .name = (char*)"SETING",
+  .name = (char*)"CONFIG",
   .loop_fn = &setting_screen_loop,
   .setup_fn = &setting_screen_setup
 };
+
+struct arcade_screen snake_options_screen = {
+  .name = (char*)"SNAKE OPTIONS",
+  .loop_fn = &snake_options_loop,
+  .setup_fn = &snake_options_setup
+};
+
+struct arcade_screen snake_multi_screen = {
+  .name = (char*)"CONFIG",
+  .loop_fn = &snake_multi_loop,
+  .setup_fn = &snake_multi_setup
+};
+
 
 
 struct arcade_screen current_screen;

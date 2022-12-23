@@ -403,6 +403,12 @@ void tetris_setup()
       field[y][x] = 0;
     }
   }
+  up_delay = 200;
+  right_delay = 100;
+  down_delay = 50;
+  left_delay = 100;
+  b1_delay = 200;
+  b2_delay = 200;
   score = 0;
   combo = 1;
   level = 0;
@@ -418,6 +424,12 @@ void tetris_setup()
 void tetris_loop() {
   long int current_time;
   if (GameOver_tetris) {
+    up_delay = 200;
+    right_delay = 200;
+    down_delay = 200;
+    left_delay = 200;
+    b1_delay = 200;
+    b2_delay = 200;
     if (score >  read_high_score_low("t")) {
       struct hs_player player;
       new_hs_player(score, player);
@@ -444,7 +456,7 @@ void tetris_loop() {
     if (action & ACT_B1_P1) {
       hold_piece_f();
     } else if (action & ACT_B2_P1) {
-      //Some cool function
+      action = ACT_U;
     } else if (action & ACT_L_P1){
       action = ACT_L;
     } else if (action & ACT_R_P1) {
@@ -460,7 +472,7 @@ void tetris_loop() {
     if (action & ACT_B1_P2) {
       hold_piece_f();
     } else if (action & ACT_B2_P2) {
-      //Some cool function
+      action = ACT_U;
     } else if (action & ACT_L_P2){
       action = ACT_L;
     } else if (action & ACT_R_P2) {
